@@ -1,0 +1,72 @@
+Q.) What is Analog and Digital signals ?
+A.) Analog and digital signals are two fundamental types of electrical signals used to transmit information in various electronic systems. Analog signals are continuous and vary smoothly over time, while digital signals are discrete and represented by a series of discrete values.
+
+Analog signal is a type of signal that represents continuous data using a continuous range of values. In other words, it can take on any value within a certain range. Analog signals are characterized by their smooth and continuous nature.
+Used in electric fan, landlines, radio etc.
+
+Digital signal is a type of signal that represents data as a sequence of discrete values, typically using binary number, it also contain different voltage values. Unlike analog signals, which vary continuously over time, digital signals are discrete and quantized, meaning they only take on specific, distinct values.
+Used in computers, smartphones, etc.
+
+Q.) State Radio , Microwave frequency bands
+A.) Radio waves, Microwaves, and Infrared waves are all part of electromagnetic spectrum, differing primarily in their wavelength and frequencies.
+Radio waves have the longest wavelengths and lowest frequencies, used in communication systems.
+Microwaves have shorter wavelength and higher frequencies, ideal for radar and cooking.
+
+Radio frequency bands span 3kHz-300GHz, covering radio(< 1GHz) and microwaves(1 GHz-300GHz) 
+
+VLF 3-30kHz ground, long range radio navigation
+LF - 30-300kHZ ground, radio beacons and navigational locators
+MF 300kHz-3MHz sky, AM radio
+HF 3-30MHZ sky, ship/aircraft
+VHF 30-300MHZ sky and line of sight, FM radio
+UHF 300MHz-3GHz line of sight cellular phone, UHF TV
+SF 3-30GHz line of sight, satellite
+EHF 30-300GHz line of sight, Radar
+
+Q.) Explain
+A.)
+1.) Twisted pair cable is a type of networking and telecommunications wiring consisting of insulated copper wire pairs twisted together to minimize noise. Widely used for LANs, Ethernet, and tele communication, these are of two types UTP and STP. The twisting helps balance the magnetic fields, which reduces noise from adjacent pairs and external interference
+UTP: Common in LAN's 
+STP: include shielding to provide better protection against noise, more expensive and harder to terminate 
+
+2.) Coaxial cable is a type of electrical cable commonly used for transmitting high-frequency signals. It consists of central conductor(copper), an insulating layer, a metal shield(secondary conductor) and an outer insulating layer. 
+
+3.) Fiber Optics or Optical Fiber is a technology that transmits data as a light pulse along a glass or plastic fiber. An Optical Fiber is a cylindrical fiber of glass that is 50 - 100 microns  in size.  Fiber optic cables are used for long-distance and high-performance data networking.
+CORE: Central tube of very thin size made of optically transparent material
+Cladding: It is a optical material surrounding the core having reflecting index lower than the core, this helps keeping the light within the core.
+Plastic Coating: IT is a plastic coating that protects the inner parts. 
+
+fiber optics has the work of transmission of photons. They transmit data as light through the core, the cladding reflects the light back into the core. At the receiving end, a photodetector converts the light back into the electrical signals. 
+
+Q.) CS and PS
+A.) Switching is the process of transferring data packets from one device to another in a network or from one network to another, using specific devices called switches. We are discussing two types of switching methods: CS, PS
+
+Cs:
+circuit switching is a communication method where a dedicated communication path, or circuit is established between two devices before data transmission begins. The circuit remains dedicated to the communication for the duration of the session and no other device can use it while the session is in progress.
+
+Ps: packet switching is a communication method where data is divided into smaller units called packets and transmitted over the network. Each packet contains the source and destination addresses. as well as other information needed for routing. The packets may take a different paths to reach their destination.
+
+Q.) Network devices?
+A.) Layer 1: deals with raw electricity or optical signals. dumb devices
+Hub: A central connection point for devices in a LAN.
+It takes an incoming signal on one port and blindly broadcast it to all other ports.
+(replaced by switches)
+
+Layer 2: smarter than hubs , understand MAC address
+Switch: Connects devices in a LAN
+Unlike a HUB, a switch learns the MAC address of every connected device. It send the data to only to the specific port where the destination device is connected.
+
+Bridge: connects two separate Lan
+filters traffic based on MAC addresses to keep local traffic local
+(replaced by switches)
+
+Layer 3: IP 
+Router: connects multiple networks( onnects home lan to inter wan )
+it uses IP address to determine the best path for data packets to travel. It maintains a routing table to make these decisions
+
+
+
+
+
+
+

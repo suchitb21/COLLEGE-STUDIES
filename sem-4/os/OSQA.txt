@@ -1,0 +1,181 @@
+Q.) What is an OS ?
+A.) An OS acts as an intermediary between the computer hardware and the user. In short, it is an interface between computer hardware and the user.
+
+X: The purpose of an OS is to provide an environment in which a user can execute programs conveniently and efficiently 
+X: The OS is a program that runs all the time on a computer. All other program including application program run on top of the OS
+X: It assigns memory, processors and IO device to processes that need them. The assignment needs to be fair and secure.
+X: OS provides interface through ( CLI : bash, PowerShell , GUI : Windows Desktop )
+
+Q.) Function of OS
+A.) Following are functions of OS
+1.) Process Management
+2.) Memory Management
+3.) File Management
+4.) Device Management
+5.) Command Interpreter System
+6.) Network Management
+7.) Security Management
+8.) Secondary storage management
+
+Q.) Kernel and Shell 
+A.) Shell is the outermost layer of the OS and handles user interaction. It interprets input for the OS and handles the output from the OS.
+Kernel is the core component of the OS. which handles low-level operations such as, process management, memory management, file system control and device handling.
+
+Q.) Explain user mode and kernel mode with an example 
+A.) User mode and kernel mode are two key states in an OS.
+User mode runs regular applications with limited access to system resources, while kernel mode runs the core OS with full control over hardware. This separation ensures security, stability, and efficient resource management.
+
+Programs in user mode can't access the hardware or kernel directly. They must request acess through system calls to the kernel.
+
+Q.) What is Multiprogramming. Multithreading. Multiprocessing ?
+A.) In a Multiprogramming OS, multiple programs run in memory at the same time. The CPU switches between programs, utilizing its resources more effectively and improving overall system performance.
+
+In multiprocessing OS there exists more than one CPU which work simultaneously, increasing overall system speed, if one processor fails, other can continue working (fault tolerance)
+
+Multithreading is a technique where a process is divided into smaller execution units called threads that run concurrently. Concurrency ( single CPU ) or Parallelism ( Multiple CPU ) within a process is achieved by dividing a process into multiple threads.
+This improves system performance and responsiveness
+
+Q.) What is an system call , different type of system call ?
+A.) User programs cannot directly access hardware or critical OS resources because it would make the system unstable and insecure. To maintain safety and keep it reliable the OS provides system calls - controlled interfaces that allow user programs to request services from kernel. These calls acts as gateway between user mode and kernel mode. 
+
+Types of system calls:
+1.) File System : open, close, read, write, seek. 
+2.) Process control: fork, exec, wait, exit, kill
+3.) MM : brk, sbrk, mnap, munmap, mlock, munlock. Used to allocate, deallocate and manage memory
+4.) Interprocess comm: pipe, socket, shmget, semget, msgget. used for data exchange and communication between processes
+5.) Device Management: open, close, writeconsole, readconsole, setconsolemode. Used to request and release devices and to perform read/write operation
+
+Q.) What is a Shell ?
+A.) Shell is a command interpreter and the outermost layer of the Operating System. It acts as an interface between the user and the kernel.
+
+The shell takes commands from the user, interprets them, and passes appropriate requests to the kernel for execution. It also displays the output returned by the kernel.
+
+X: Shell provides a user interface to access OS services
+X: It does not interact with hardware directly
+X: It communicates with the kernel using system calls
+X: It can be command-line based (CLI) or graphical (GUI)
+
+Examples of Shells:
+
+CLI: Bash, Zsh, PowerShell
+
+GUI: Windows Explorer, GNOME Desktop
+
+Q.) Types of Thread and Thread models
+A.) 
+A.)
+A thread is the smallest unit of CPU execution within a process.
+A process can have multiple threads sharing the same address space, code, and resources.
+
+X: Threads share memory and resources of a process
+X: Threads are lightweight compared to processes
+X: Context switching between threads is faster
+
+Types of Threads
+
+Threads are classified based on where they are managed.
+
+1.) User-Level Threads (ULT)
+
+A.)
+User-level threads are managed by a user-level thread library, not by the kernel. The kernel is unaware of the existence of these threads.
+
+X: Thread creation, scheduling, and management done in user space
+X: Faster thread operations (no kernel involvement)
+X: If one thread blocks, the entire process blocks
+X: No true parallelism on multiple CPUs
+
+Example:
+
+POSIX threads (user-level implementation)
+
+Java green threads (early versions)
+
+2.) Kernel-Level Threads (KLT)
+
+A.)
+Kernel-level threads are managed directly by the OS kernel. Each thread is known to the kernel and scheduled independently.
+
+X: Kernel handles scheduling and management
+X: If one thread blocks, other threads can continue
+X: Supports true parallelism on multi-core systems
+X: Slower thread operations due to kernel overhead
+
+Example:
+
+Windows threads
+
+Linux threads
+
+Thread Models (Relationship between User Threads and Kernel Threads)
+
+Thread models describe how user threads are mapped to kernel threads.
+
+1.) Many-to-One Model
+
+A.)
+Many user-level threads are mapped to one kernel thread.
+
+X: Thread management done in user space
+X: Very fast thread creation and switching
+X: If one thread blocks, all threads block
+X: No parallelism on multiprocessor systems
+
+Diagram idea:
+
+User Threads → 1 Kernel Thread
+
+2.) One-to-One Model
+
+A.)
+Each user-level thread is mapped to one kernel thread.
+
+X: True parallelism supported
+X: If one thread blocks, others continue
+X: Higher overhead due to kernel involvement
+X: OS limits number of threads
+
+Used in:
+
+Windows
+
+Linux
+
+Diagram idea:
+
+1 User Thread → 1 Kernel Thread
+
+3.) Many-to-Many Model
+
+A.)
+Many user-level threads are mapped to many kernel threads.
+
+X: Combines advantages of ULT and KLT
+X: Supports parallelism
+X: Blocking of one thread does not block all
+X: Complex to implement
+
+Diagram idea:
+
+Many User Threads ↔ Many Kernel Threads
+
+Quick Exam Comparison (Very Important)
+Feature	User-Level Threads	Kernel-Level Threads
+Managed by	User thread library	OS Kernel
+Kernel awareness	❌ No	✅ Yes
+Blocking effect	Entire process blocks	Only one thread blocks
+Parallel execution	❌ No	✅ Yes
+Overhead	Low	High
+One-line Exam Ready Answers
+
+Shell:
+
+Shell is the command interpreter of an operating system that acts as an interface between the user and the kernel.
+
+Thread Model:
+
+Thread models define the relationship between user-level threads and kernel-level threads, such as many-to-one, one-to-one, and many-to-many models.
+
+
+
+

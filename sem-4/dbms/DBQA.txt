@@ -1,0 +1,85 @@
+Q.) What is Data ?
+A.) Data is any information that can be stored and interpreted. Data is collection of facts, such as numbers, words, measurements, observations or just description of things. Data refers to raw, unorganized facts and figures, it is limitless and present everywhere in the universe
+
+Q.) What is Database ?
+A.) A database is a structured collection of data designed for efficient storage, retrieval and manipulation. It serves as a centralized repository, allowing data to be accessed, managed, and updated by multiple users or applications.
+
+Q.) What is a DBMS ?
+A.) At the core of every database system is the DBMS a software layer that acts as an intermediary between users and the raw data. The DBMS handles tasks like querying, updating, deleting and managing access permissions, without requiring users to know the physical details of where the data is stored.
+
+DBMSs provide features like backup, recovery, performance optimization and data security to ensure the system runs efficiently and reliably.
+
+Q.) What is a Schema ?
+A.) The structural blueprint that defines how data is organized using, tables, fields, data types, and relationships
+
+Q.) What are the components of Database ?
+A.) Data, Schema, DBMS, Queries, Users
+
+Q.)What are the types of databases ?
+A.) Databases can be classified into two primary types Relational (SQL) and NoSQL Databases. NoSQL is then further divided into four types: Document-Oriented, Key-Value, Wide-Column, and Graph databases
+
+Q.) Elaborate on RDBMS
+A.) Relational databases organize data into tables made up of rows (records) and columns (fields). They use schemas (blueprints) to define how data is structured and how different tables relate to each other.
+
+X: Strict schema-based structure.
+X: Primary Keys to identify a row in the table and Foreign Keys to relate between tables
+X: Strong ACID compliance ( Atomicity, Consistency, Isolation, Durability )
+X: Ideal for structured data
+
+Q.) Elaborate on NoSQL Db
+A.) "NoSQL" stands for "Not Only SQL". These databases are designed to handle unstructured or semi-structured data, such as text, images, videos or sensor data. They don't rely on the traditional table format.
+
+X: Flexible data models ( no fixed schema )
+X: Scales horizontally for high-volume data.
+X: Often optimized for specific use cases like graphs.
+
+1.) Document Db : Store data as JSON-like documents. (ex : MongoDB)
+2.) Key-Value Stores : Store simple key-value pairs for fast lookups. (ex : Redis)
+3.) Columnar Databases : Store data by columns for analytics. (ex : Cassandra)
+4.) Graph Databases : Store nodes & relationships for connected data.(ex : Neo4j)
+
+Q.) Characteristics of the Database ?
+A.) In DBS, one repository maintains the data, it's labelling, names and structure once, then accessed by various users in that DB. In a FMS it will be done independently.
+Following are characteristics of DB
+1.) Self-Describing Nature of a DBS
+One of the most fundamental characteristic's of the database approach is that the DBS contains not only the database itself but also an entire definition or description of the database structure and constraints also known as metadata of the DB
+
+This metadata is stored within the DBMS catalog, which contains information like the structure of every file, the sort and storage format of every data item, and various rules of the data
+
+2.) Insulation between Programs and Data
+In a traditional FMS, any change in the structure of database resulted in changing all the program that access that file
+For DBS, in most cases there is no need of such changes in program where structure of database is altered, so independence is achieved between them.
+
+The structure of data files is stored within the DBMS catalog separately from the programs that access them. This is known as program-data independence
+(ex: DBMS internally: today: heap file , tomorrow: B+ tree
+     but the query stays: SELECT * FROM STUDENT;
+     "You can change HOW data is stored without changing the program that access them"
+)
+
+3.) Data abstraction
+The characteristic that allows program-data independence and program-operation independence is knowns as data Abstraction.
+A data model is used to hide storage details and present the users with a conceptual view of the database
+Programs refer to the data model constructs rather than data storage details
+
+(ex: program-operation "You can change WHAT operations do internally without changing programs"
+ query: SELECT * FROM STUDENT ORDER BY marks;
+ now DBMS decides what sort algorithm to use
+)
+
+4.) Support of multiple views of the data
+Each user may see a different view of the database, which describes ONLY the data of interest to that user.
+A view could also be a subset of the database, or it can contain virtual data that is derived from the DB
+
+5.) Sharing of data and multi-user transaction processing
+Concurrency control within the DBMS guarantees that each query is correctly executed or aborted
+Allowing a set of concurrent users to retrieve from and to update the database is a must in most modern applications, these sorts of applications are called online transaction processing (OLTP) application
+Recovery subsystem should ensure each transaction has it's effect permanently recorded in their database
+
+
+
+
+
+
+
+
+

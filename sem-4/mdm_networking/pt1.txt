@@ -1,0 +1,7 @@
+*MDM Topics from the Syllabus for IA-1 :*
+Module -1 (Full)
+• Evolution of telecommunications • Importance and applications in various industries • Overview of voice, video, and data communication
+Module -2 (Full)
+• Analog vs. Digital signals •Bandwidth and Frequency Spectrum • Transmission media: Wired (Copper, Fiber- optic) and Wireless 
+Module -3 
+• Network topologies: Star, Mesh, Ring, Hybrid 	• Overview of Switching and Routing

@@ -1,0 +1,87 @@
+Q.) What is an ER Model
+A.) The ER Model is a conceptual model for designing a database. This model represents the logical structure of a database.
+
+It is a high-level data model which defines the data elements and relationships for a specified system. This model is based on three basic concepts:
+1.) Entities
+2.) Attributes
+3.) Relationships
+
+Entities: It may be an object with physical existence ( ex: person, car, house ) or it may be an object with a conceptual existence ( ex: company, job, course )
+
+An Entity set is a set of entities of same type
+
+Attributes: Characteristics of an entity
+
+Relationship: Represents the association between entity types
+
+Q.) Types of Attributes
+A.) 
+1.) Simple Attribute: These have values that cannot be divided further ( normal ellipse )
+2.) Composite Attribute: This kind of attribute can be divided further into simple attributes
+3.) Key Attribute: It can uniquely identify an entity from an entity set. Text is underlined
+4.) Multivalued Attribute: It can hold multiple values. Represented by double ellipses
+5.) Derived Attribute: It hold dynamic value and is derived from another attribute. Represented by dashed oval. 
+( ex: age of a person )
+6.) Stored Attribute: The attribute that gives the value to get the derived Attribute
+( ex: DOB of a person )
+7.) Complex Attribute: Composite and multivalued attributes nested arbitrarily
+( ex: Person having multiple addresses )
+8.) Description Attribute: Attributes of relationship set
+9.) Partial Key:
+
+Q.) Types of keys
+A.)
+1.) Super Key: set of one or more attributes which can uniquely identify a row in a table
+2.) Candidate Key: Minimal super key with no redundant attributes.
+3.) Primary Key: It is selected from a set of candidate keys.
+Done by DBA
+4.) Foreign Key: Attribute of a table that points to the Candidate key of another table.
+
+Q.) What is a Relationship set ?
+A.) A set of relationships of same type.
+
+Q.) What is Degree of a relationship set ?
+A.) The number of entity sets participating in a relationship set. Unary , Binary , Ternary , Quaternary 
+
+Q.) What is Cardinality ?
+A.) The number of times an entity of an entity set participates in a relationship set is know an cardinality.
+One to one , many to many , one to many , many to one .
+
+Q.) What is total and partial participation ? 
+A.) If each entity of the Entity set is involved in the relationship then it is known as total participation. Represented by double line, otherwise the participation is partial
+
+Q.) What is relationship constraint ?
+A.) Cardinality and participation constraint.
+Participation constraint: Controls whether a relationship is mandatory (total) or optional (partial)
+Cardinality: Controls the ratio of the relationship
+
+Q.) What is EER model ?
+A.) The Enhanced ER model is an extension of the traditional ER model used to represent complex database requirements. As data complexity increases, the basic ER model becomes insufficient.
+Features of EER model:
+1.) Super class and subclass Entity set types
+2.) Specialization
+3.) Generalization
+4.) Attribute Inheritance
+5.) Categorization
+6.) Aggregation
+
+Q.) What is Superclass and Subclass ?
+A.) Superclass is a higher-level entity set that has common attributes. Subclass is a lower-level entity set that inherits attributes and relationships from its superclass but also has its own specific attributes or relationships. This supports the concept of inheritance, where a subclass automatically possesses the features of the superclass.
+( ex:  Science is Super class which has subclasses like Physics, Chemistry, Biology )
+
+Q.) What is Generalization and Specialization ?
+A.) Generalization is a bottom-up approach grouping similar lower-level entities (specialized class) into a single higher-level entity (generalized class) , while specialization is the opposite top-down approach, breaking a higher-level entity (generalized class) into more specific lower-level entities (specialized class)
+
+Q.) What is Categorization ?
+A) A Category ( or Union type ) is a subclass that is derived from two or more super classes that may not be related. It allows the model to represent an entity that can be a member of more than one entity set.
+
+Q.) Attribute and Relationship Inheritance ?
+A.) In the EER model. subclasses inherit all attributes and relationships of their supercclasses. This supports reusability and data consistency, as common attributes don't need to be redefined
+
+Q.) What is an Aggregation ?
+A.) Aggregation is an abstraction through which relationships are treated as higher-level entities. This let's us represent relationships among relationships
+
+
+
+
+

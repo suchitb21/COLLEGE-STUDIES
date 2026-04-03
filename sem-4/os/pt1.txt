@@ -1,0 +1,12 @@
+*OS PT1 Portion*
+1.Module 1-Complete
+
+2.From Module 2-
+Process, Process State Transition,Process Control Block and Process Scheduling policies.
+
+3.From Module 4-
+Swapping,
+Memory partitioning-fixed partitioning and variable partitioning 
+Memory allocation techniques -
+Best fit,Worst fir,Next fit,First  fit.
+Paging

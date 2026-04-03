@@ -1,0 +1,22 @@
+Computational Theory Syllabus for PT 1:
+
+*Module 1:* 
+Alphabets, Strings, Languages
+Regular Operations
+Regular Expression
+
+*Module 2:*
+Finite Automata (FA)
+Finite State Machine (FSM)
+Deterministic Finite Automata (DFA) - Numericals
+
+*Module 3:*
+Grammar and Chomsky Hierarchy 
+Regular Grammar
+- Equivalence of Left and Right Linear Grammar
+- Equivalence of RG and FA
+Context Free Grammar 
+- Definition 
+- Sentential Form
+- Leftmost and Rightmost Derivation 
+- Derivation Tree

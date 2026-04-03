@@ -1,0 +1,204 @@
+Q.6 Explain following Relational Algebra operators with example
+
+(Relational Algebra is a procedural query language used to define operations on relations (tables). Each operator takes one or more relations as input and produces a new relation as output.)
+
+---
+
+a) SELECT ( σ )
+
+Q.) What is Select operator?
+A.) The Select operator is used to choose rows (tuples) from a relation that satisfy a given condition. It works on rows and does not change the structure of the table.
+
+Syntax:
+σ condition (Relation)
+
+Example:
+STUDENT(RollNo, Name, Age, Marks)
+
+σ Marks > 80 (STUDENT)
+
+Result:
+Returns all rows from STUDENT table where Marks are greater than 80.
+
+---
+
+b) PROJECT ( π )
+
+Q.) What is Project operator?
+A.) The Project operator is used to select specific columns (attributes) from a relation. Duplicate rows are automatically removed from the result.
+
+Syntax:
+π attribute1, attribute2 (Relation)
+
+Example:
+π Name, Marks (STUDENT)
+
+Result:
+Returns a table containing only Name and Marks columns of STUDENT relation.
+
+---
+
+c) CARTESIAN PRODUCT ( × )
+
+Q.) What is Cartesian Product?
+A.) The Cartesian Product operator combines every tuple of one relation with every tuple of another relation. The resulting relation contains all possible combinations of rows.
+
+Syntax:
+Relation1 × Relation2
+
+Example:
+STUDENT(RollNo, Name)
+COURSE(CourseID, CourseName)
+
+STUDENT × COURSE
+
+Result:
+If STUDENT has m rows and COURSE has n rows, the result will have m × n rows.
+
+---
+
+d) UNION ( ∪ )
+
+Q.) What is Union operator?
+A.) The Union operator combines tuples from two relations and removes duplicate tuples. Both relations must be union-compatible.
+
+Union-compatible conditions:
+• Same number of attributes
+• Corresponding attributes must have same domain
+
+Syntax:
+Relation1 ∪ Relation2
+
+Example:
+CS_STUDENTS(RollNo, Name)
+IT_STUDENTS(RollNo, Name)
+
+CS_STUDENTS ∪ IT_STUDENTS
+
+Result:
+Returns a relation containing all distinct students from both CS and IT.
+
+---
+
+e) DIFFERENCE ( − )
+
+Q.) What is Difference operator?
+A.) The Difference operator returns tuples that are present in the first relation but not in the second relation. Both relations must be union-compatible.
+
+Syntax:
+Relation1 − Relation2
+
+Example:
+ALL_STUDENTS(RollNo)
+PLACED_STUDENTS(RollNo)
+
+ALL_STUDENTS − PLACED_STUDENTS
+
+Result:
+Returns students who are not placed.
+
+---
+
+f) INTERSECTION ( ∩ )
+
+Q.) What is Intersection operator?
+A.) The Intersection operator returns only the tuples that are common in both relations. Relations must be union-compatible.
+
+Syntax:
+Relation1 ∩ Relation2
+
+Example:
+SPORTS_STUDENTS(RollNo)
+CULTURAL_STUDENTS(RollNo)
+
+SPORTS_STUDENTS ∩ CULTURAL_STUDENTS
+
+Result:
+Returns students who participate in both sports and cultural activities.
+
+---
+
+g) RENAME ( ρ )
+
+Q.) What is Rename operator?
+A.) The Rename operator is used to change the name of a relation or its attributes. It is mainly used to avoid ambiguity and improve readability in complex expressions.
+
+Syntax:
+ρ NewRelationName (Relation)
+
+or
+
+ρ (NewAttr1, NewAttr2, ...) (Relation)
+
+Example:
+ρ STUD (STUDENT)
+
+Result:
+The relation STUDENT is renamed as STUD.
+
+---
+
+Q.7 Queries using Relational Algebra based on given operators
+
+---
+
+1. Query using SELECT
+
+Find students whose marks are greater than 60.
+
+σ Marks > 60 (STUDENT)
+
+---
+
+2. Query using PROJECT
+
+Display only names of students.
+
+π Name (STUDENT)
+
+---
+
+3. Query using CARTESIAN PRODUCT
+
+Combine STUDENT and COURSE relations.
+
+STUDENT × COURSE
+
+---
+
+4. Query using UNION
+
+Find all students from CS and IT departments.
+
+CS_STUDENTS ∪ IT_STUDENTS
+
+---
+
+5. Query using DIFFERENCE
+
+Find students who are not placed.
+
+ALL_STUDENTS − PLACED_STUDENTS
+
+---
+
+6. Query using INTERSECTION
+
+Find students who are part of both sports and cultural committees.
+
+SPORTS_STUDENTS ∩ CULTURAL_STUDENTS
+
+---
+
+7. Query using RENAME
+
+Rename STUDENT relation as S.
+
+ρ S (STUDENT)
+
+---
+
+Note:
+• Relational Algebra operators are closed, meaning the result of every operation is a relation.
+• These operators form the theoretical foundation of SQL queries.
+• SELECT works on rows, PROJECT works on columns, while others combine or modify relations.
