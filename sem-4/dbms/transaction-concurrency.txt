@@ -1,0 +1,152 @@
+Q.) What is transaction ?
+
+A.) A transaction refers to a sequence of one or more operations ( such as read, write, update, or delete  and [ COMMIT , ROLLBACK ] ) performed on the database as a single logical unit of work.
+
+A transaction ensures that either all the operations in the sequence are successfully executed ( committed ) or none of them take effect ( roll back ) 
+
+Transaction are designed to maintain the integrity, consistency and reliability of the database, even in the case of system failures or concurrent access.
+
+DBMS transactions must be atomic, consistent, isolated and durable. If the DB was in inconsistent state before a transaction, it would remain in the inconsistent state after the transaction.
+
+Q.) ACID Properties of Transaction
+A.) Transaction in DBMS must ensure data is accurate and reliable. They follow four key ACID properties:
+
+1.) Atomicity : A transaction is all or nothing. If any part fails, the entire transaction is rolled back. Example : While transferring money, both debit and credit must succeed. If one fails, nothing should change.
+
+2.) Consistency : A transaction must keep the database in a valid state, moving it from one consistent state to another
+
+3.) Isolation : Transaction run independently. One transaction's operations should not affect another's intermediate steps. Example : 2 users withdrawing from the same account must not interfere with each other's balance updates.
+
+4.) Durability: Once a transaction is committed, it's changes stay even if the system crashed. Example : After a successful transfer, the updated balance remains safe despite a power failure.
+
+
+Q.) What is serializable schedule ?
+A.) A transaction schedule is serializable if its outcome is equal to the outcome of its transactions executed serially ( i.e sequentially without overlapping in time. ). A serializable schedule always leaves the database in a consistent state. A serial schedule is always a serializable schedule because a new transaction only starts when the older one has finished execution.
+
+
+Q.) What is conflict serializability ?
+A.) Conflict serializability checks if a schedule of transactions can be transformed into a sequence where transactions are executed serially, while keeping the same results. This type of serializability focuses on the order of conflicting operations.
+
+Two operations are said to be conflicting if the belong to different transaction, operate on same data and at least one of them is a write operation. 
+
+ADVANTAGE: DATA INTEGRITY, CLEAR RULES, EFFICIENT EXECUTION, STRONG ISOLATION, DETECTABLE ISSUES ( using precedence graph )
+DISADVANTAGE: RESTRICTIVE, COMPLEXITY, PERFORMANCE OVERHEAD, DEADLOCK POTENTIAL, NA
+
+
+Q.) Explain Lock-based protocols with example 
+
+A.) Lock-based protocols are concurrency control mechanisms where transactions must acquire locks on data items before accessing them. A lock prevents other transactions from accessing the same data simultaneously, ensuring isolation and consistency.
+
+Types of Locks:
+
+1.) Shared Lock ( S-Lock ) : Also called a read lock. Multiple transactions can hold a shared lock on the same data item at the same time, but none can write to it.
+Example : T1 and T2 both want to read Account A. Both can hold a shared lock on A simultaneously.
+
+2.) Exclusive Lock ( X-Lock ) : Also called a write lock. Only one transaction can hold an exclusive lock on a data item. No other transaction can read or write that item until the lock is released.
+Example : T1 wants to update Account A's balance. It acquires an exclusive lock — T2 must wait until T1 releases it.
+
+Two-Phase Locking Protocol ( 2PL ) :
+The most widely used lock-based protocol. It has two phases :
+
+- Growing Phase : A transaction can acquire locks but cannot release any lock.
+- Shrinking Phase : A transaction can release locks but cannot acquire any new lock.
+
+2PL guarantees conflict serializability.
+
+Example :
+
+
+T1 : Lock-X(A) → Read(A) → Write(A) → Unlock(A) → Lock-X(B) → Read(B) → Write(B) → Unlock(B)
+
+T1 first acquires all needed locks (growing phase), performs operations, then releases them (shrinking phase).
+
+ADVANTAGE : Ensures serializability, Prevents dirty reads, Simple to implement
+DISADVANTAGE : Can cause deadlocks, Reduced concurrency, Lock overhead
+
+
+
+Q.) Explain Timestamp-based protocols with example
+
+A.) Timestamp-based protocols are concurrency control mechanisms that use timestamps to determine the order in which transactions access data, without using locks. Every transaction is assigned a unique timestamp ( TS ) when it enters the system. Older transactions have smaller timestamps.
+
+Each data item Q maintains two timestamp values :
+
+1.) W-timestamp(Q) : The largest timestamp of any transaction that successfully wrote Q.
+2.) R-timestamp(Q) : The largest timestamp of any transaction that successfully read Q.
+
+Rules :
+
+For a Read operation by Transaction Ti on data item Q :
+- If TS(Ti) < W-timestamp(Q) → Ti is trying to read a value that has already been overwritten by a newer transaction → Transaction Ti is rolled back.
+- Otherwise → Read is executed and R-timestamp(Q) = max( R-timestamp(Q), TS(Ti) )
+
+For a Write operation by Transaction Ti on data item Q :
+- If TS(Ti) < R-timestamp(Q) → A newer transaction has already read Q, so Ti's write is too late → Transaction Ti is rolled back.
+- If TS(Ti) < W-timestamp(Q) → A newer transaction has already written Q → Transaction Ti is rolled back.
+- Otherwise → Write is executed and W-timestamp(Q) = TS(Ti)
+
+Example :
+
+Suppose T1 has TS = 100 and T2 has TS = 200.
+T2 reads and writes data item A first ( W-timestamp(A) = 200 ).
+Now T1 tries to write A → TS(T1) = 100 < W-timestamp(A) = 200 → T1 is rolled back because a newer transaction T2 has already written A.
+
+ADVANTAGE : No deadlocks, Ensures serializability, No waiting ( transactions are rolled back instead )
+DISADVANTAGE : Starvation possible ( a transaction may keep getting rolled back ), Overhead of maintaining timestamps, More rollbacks compared to locking
+
+
+
+Q.) Explain Log-based recovery with example
+
+A.) Log-based recovery is a technique used to restore a database to a consistent state after a system failure ( such as a crash or power failure ). Every operation performed by a transaction is recorded in a log file before it is applied to the database. The log file is stored on stable storage so it survives failures.
+
+Each log record contains :
+- Transaction ID
+- Data item name
+- Old value ( before the operation )
+- New value ( after the operation )
+
+Types of Log Records :
+
+1.) < Ti , start > — Transaction Ti has started.
+2.) < Ti , X , old_value , new_value > — Transaction Ti has written data item X, changing it from old_value to new_value.
+3.) < Ti , commit > — Transaction Ti has committed successfully.
+4.) < Ti , abort > — Transaction Ti has been rolled back.
+
+Recovery Operations :
+
+1.) REDO ( Ti ) : If the log has both < Ti , start > and < Ti , commit >, but the changes are not yet in the database → all of Ti's operations are redone ( re-applied ) to ensure the committed data is saved.
+
+2.) UNDO ( Ti ) : If the log has < Ti , start > but no < Ti , commit > → all of Ti's operations are undone ( reversed using old values ) to restore the database to the state before Ti started.
+
+Example :
+
+
+< T1 , start >
+< T1 , A , 500 , 400 >       → T1 wrote A (debited 100)
+< T1 , B , 200 , 300 >       → T1 wrote B (credited 100)
+< T1 , commit >
+
+< T2 , start >
+< T2 , C , 1000 , 800 >      → T2 wrote C (debited 200)
+                              → System CRASHES here
+
+
+After recovery :
+- T1 → has commit record → REDO T1 ( re-apply changes to A and B )
+- T2 → no commit record → UNDO T2 ( restore C back to 1000 )
+
+ADVANTAGE : Reliable recovery after failures, Supports both undo and redo, Durable commits ( satisfies Durability in ACID )
+DISADVANTAGE : Log file can grow very large, Overhead of writing every operation to log, Recovery process can be slow for large logs
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,96 @@
+Q.) Define Normalization. Explain 1NF, 2NF and 3NF with suitable example 
+
+
+
+A. Introduction to Normalization and Anomalies
+
+Normalization is closely related to the idea of efficiency and the elimination of redundancy. Where redundancy exists, there is a risk that certain operations will create data anomalies. The term anomaly is used to describe something that is not in line with expectations. In a relational database, we expect that all of the data stored will be correct and internally consistent.
+
+When a database is not normalized, we run into three specific types of anomalies. Imagine a poorly designed single table storing [Student_ID, Student_Name, Course, Instructor, Instructor_Phone]:
+
+Update Anomaly: If an instructor changes their phone number, you have to update it in hundreds of rows (every row for every student taking their course). If you miss even one row, the data is inconsistent.
+
+Insertion Anomaly: You cannot add a newly hired Instructor and their Phone Number to the database until at least one student enrolls in their course (because Student_ID is required for the row).
+
+Deletion Anomaly: If the only student enrolled in an advanced course drops it, deleting that student's row entirely erases the fact that the course, the instructor, and the instructor's phone number even exist.
+
+To fix these anomalies, we pass the data through "Normal Forms."
+
+
+
+B. The Normal Forms (The "Rules" of Database Design)
+
+Let's look at a messy, Unnormalized table to start:
+Student_Records Table
+| Roll_No (PK) | Name | Department | Dept_Head | Subjects |
+| :--- 	       | :--- | :--- 	   | :---      | :---     |
+| 101          | Alex | CompSci    | Dr. Smith | Java, SQL, Python |
+| 102          | Sam  | Physics    | Dr. Jones | Mechanics, Optics |
+
+1. First Normal Form (1NF): (Atomic Values)
+The Rule: A table is in 1NF if every column holds a single, indivisible (atomic) value, and there are no repeating groups or arrays.
+
+The Problem: In our table, the Subjects column holds multiple values separated by commas. This makes it a nightmare to search for all students taking "SQL".
+The Fix: We split the comma-separated values into their own rows.
+
+Table in 1NF:
+| Roll_No (PK) | Subject (PK) | Name | Department | Dept_Head |
+| :---         | :---         | :--- | :---       | :---      |
+| 101          | Java         | Alex | CompSci    | Dr. Smith |
+| 101          | SQL          | Alex | CompSci    | Dr. Smith |
+| 102          | Optics       | Sam  | Physics    | Dr. Jones |
+
+Note: Because Roll_No 101 repeats, our Primary Key is now a Composite Key: (Roll_No + Subject).
+
+2. Second Normal Form (2NF): (No Partial Dependency)
+The Rule: A table is in 2NF if it is in 1NF and all non-key columns depend on the entire primary key, not just part of it. (This only applies if you have a composite primary key).
+
+The Problem: Look at our 1NF table. Our primary key is (Roll_No, Subject). But does a student's Name or Department depend on the Subject? No. Alex's name is Alex regardless of the subject. Name only depends on Roll_No. This is a partial dependency, which causes massive redundancy.
+The Fix: Split the table into two. One for the Student details, one for the Subjects they take.
+
+Tables in 2NF:
+Student_Table:
+| Roll_No (PK) | Name | Department | Dept_Head |
+| :---         | :--- | :---       | :---      |
+| 101          | Alex | CompSci    | Dr. Smith |
+| 102          | Sam  | Physics    | Dr. Jones |
+
+Enrollment_Table:
+| Roll_No (PK/FK) | Subject (PK) |
+| :---            | :--- |
+| 101             | Java |
+| 101             | SQL  |
+
+3. Third Normal Form (3NF): (No Transitive Dependency)
+The Rule: A table is in 3NF if it is in 2NF and no non-key column depends on another non-key column. All non-key columns must depend strictly on the primary key.
+
+The Problem: Look at the Student_Table from 2NF. Dept_Head tells us who runs the department. But Dept_Head actually depends on the Department column, not the Roll_No. (Roll_No -> Department -> Dept_Head). This is a transitive dependency. If Alex changes majors, we shouldn't have to worry about updating Dr. Smith's data.
+The Fix: Move the department details into their own table.
+
+Tables in Final 3NF:
+Student_Table:
+| Roll_No (PK) | Name | Department (FK) |
+| :--- 	       | :--- | :--- |
+| 101          | Alex | CompSci |
+| 102          | Sam  | Physics |
+
+Department_Table:
+| Department (PK) | Dept_Head |
+| :---		  | :---      |
+| CompSci 	  | Dr. Smith |
+| Physics 	  | Dr. Jones |
+
+(The Enrollment_Table from step 2 remains untouched).
+
+Summary
+By reaching 3NF, we have successfully divided a large, redundant table into smaller, related tables linked by Primary and Foreign keys.
+
+1NF eliminated repeating lists.
+
+2NF eliminated data tied to only part of a key.
+
+3NF eliminated data tied to non-keys.
+As a result, update, insertion, and deletion anomalies are completely prevented!
+
+
+Types of anomalies - https://bdavison.napier.ac.uk/db/Notes/Normalisation/anomalies/
