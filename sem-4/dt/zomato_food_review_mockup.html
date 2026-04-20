@@ -1,0 +1,431 @@
+
+<style>
+  * { box-sizing: border-box; }
+  .wrap {
+    display: flex;
+    justify-content: center;
+    padding: 2rem 1rem;
+    background: #f5f5f0;
+    border-radius: 16px;
+  }
+  .phone {
+    width: 340px;
+    background: #ffffff;
+    border-radius: 36px;
+    border: 2px solid #ddd;
+    overflow: hidden;
+    font-family: var(--font-sans);
+  }
+  .status-bar {
+    background: #E23744;
+    padding: 10px 20px 8px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .status-bar span { color: #fff; font-size: 11px; font-weight: 500; }
+  .app-header {
+    background: #E23744;
+    padding: 10px 16px 16px;
+  }
+  .app-header .back { color: rgba(255,255,255,0.8); font-size: 12px; margin-bottom: 4px; cursor: pointer; }
+  .app-header h2 { color: #fff; font-size: 16px; font-weight: 500; margin: 0; }
+  .app-header .sub { color: rgba(255,255,255,0.75); font-size: 11px; margin-top: 2px; }
+
+  .content { padding: 16px; background: #f7f7f7; }
+
+  .order-card {
+    background: #fff;
+    border-radius: 12px;
+    border: 0.5px solid #e8e8e8;
+    padding: 12px 14px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .order-img {
+    width: 48px; height: 48px;
+    border-radius: 8px;
+    background: #fde8ea;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; flex-shrink: 0;
+  }
+  .order-info .name { font-size: 13px; font-weight: 500; color: #1a1a1a; }
+  .order-info .rest { font-size: 11px; color: #888; margin-top: 2px; }
+  .order-info .date { font-size: 10px; color: #aaa; margin-top: 1px; }
+
+  .section-card {
+    background: #fff;
+    border-radius: 12px;
+    border: 0.5px solid #e8e8e8;
+    padding: 14px;
+    margin-bottom: 12px;
+  }
+  .section-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: #999;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .overall-stars {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .big-star {
+    font-size: 32px;
+    cursor: pointer;
+    color: #ddd;
+    transition: color 0.15s, transform 0.1s;
+    line-height: 1;
+    user-select: none;
+  }
+  .big-star.lit { color: #F4A832; }
+  .big-star:hover { transform: scale(1.15); }
+  .rating-label {
+    text-align: center;
+    font-size: 13px;
+    font-weight: 500;
+    color: #555;
+    margin-bottom: 4px;
+    min-height: 18px;
+  }
+
+  .item-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 0.5px solid #f0f0f0;
+  }
+  .item-row:last-child { border-bottom: none; }
+  .item-name { font-size: 12px; color: #333; }
+  .mini-stars { display: flex; gap: 3px; }
+  .mini-star { font-size: 16px; color: #ddd; cursor: pointer; transition: color 0.12s; user-select: none; }
+  .mini-star.lit { color: #F4A832; }
+
+  .tags-wrap { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag {
+    padding: 5px 10px;
+    border-radius: 99px;
+    border: 1px solid #e0e0e0;
+    font-size: 11px;
+    color: #555;
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .tag.selected { background: #fde8ea; border-color: #E23744; color: #E23744; }
+
+  .review-textarea {
+    width: 100%;
+    border: 0.5px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 12px;
+    color: #333;
+    background: #fafafa;
+    resize: none;
+    height: 72px;
+    font-family: var(--font-sans);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .review-textarea:focus { border-color: #E23744; background: #fff; }
+  .char-count { text-align: right; font-size: 10px; color: #bbb; margin-top: 4px; }
+
+  .photo-row { display: flex; gap: 8px; margin-bottom: 0; }
+  .photo-box {
+    width: 56px; height: 56px;
+    border-radius: 8px;
+    border: 1px dashed #ddd;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    font-size: 18px; color: #ccc;
+    cursor: pointer;
+    background: #fafafa;
+    transition: border-color 0.15s;
+    flex-shrink: 0;
+  }
+  .photo-box:hover { border-color: #E23744; color: #E23744; }
+  .photo-box .plus-label { font-size: 9px; color: #bbb; margin-top: 2px; }
+  .photo-added {
+    width: 56px; height: 56px;
+    border-radius: 8px;
+    background: #fde8ea;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .photo-added .remove {
+    position: absolute; top: -4px; right: -4px;
+    width: 14px; height: 14px;
+    background: #E23744; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 8px; color: #fff; cursor: pointer;
+  }
+
+  .submit-btn {
+    width: 100%;
+    padding: 13px;
+    background: #E23744;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    font-family: var(--font-sans);
+  }
+  .submit-btn:hover { background: #c9303c; }
+  .submit-btn:active { transform: scale(0.98); }
+  .submit-btn:disabled { background: #f0a0a6; cursor: not-allowed; transform: none; }
+
+  .success-screen {
+    padding: 32px 24px;
+    text-align: center;
+    background: #fff;
+    display: none;
+  }
+  .success-screen.show { display: block; }
+  .success-icon {
+    width: 64px; height: 64px;
+    background: #edfbf4;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+    margin: 0 auto 16px;
+  }
+  .success-screen h3 { font-size: 17px; font-weight: 500; color: #1a1a1a; margin: 0 0 8px; }
+  .success-screen p { font-size: 12px; color: #888; margin: 0 0 20px; line-height: 1.6; }
+  .coupon-box {
+    background: #fde8ea;
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 20px;
+  }
+  .coupon-box .c-label { font-size: 10px; color: #E23744; font-weight: 500; letter-spacing: 0.05em; margin-bottom: 4px; }
+  .coupon-box .c-code { font-size: 18px; font-weight: 500; color: #E23744; letter-spacing: 0.08em; }
+  .coupon-box .c-sub { font-size: 10px; color: #c97a80; margin-top: 2px; }
+  .done-btn {
+    width: 100%;
+    padding: 12px;
+    background: #E23744;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: var(--font-sans);
+  }
+</style>
+
+<h2 class="sr-only">Zomato food review and feedback screen mockup — rate your meal, tag experience, write a review, and add photos</h2>
+
+<div class="wrap">
+  <div class="phone">
+    <div class="status-bar">
+      <span>9:41</span>
+      <span>&#9679;&#9679;&#9679; 98%</span>
+    </div>
+    <div class="app-header">
+      <div class="back">&#8592; My orders</div>
+      <h2>Rate your experience</h2>
+      <div class="sub">Help others make better choices</div>
+    </div>
+
+    <div id="review-form">
+      <div class="content">
+
+        <div class="order-card">
+          <div class="order-img">&#127828;</div>
+          <div class="order-info">
+            <div class="name">Chicken Burger + Fries + Coke</div>
+            <div class="rest">Burger Singh, Andheri West</div>
+            <div class="date">Today, 8:17 PM &nbsp;&#183;&nbsp; Order #Z8823041</div>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <div class="section-label">Overall rating</div>
+          <div class="overall-stars" id="overall-stars">
+            <span class="big-star" data-i="1" onclick="setOverall(1)">&#9733;</span>
+            <span class="big-star" data-i="2" onclick="setOverall(2)">&#9733;</span>
+            <span class="big-star" data-i="3" onclick="setOverall(3)">&#9733;</span>
+            <span class="big-star" data-i="4" onclick="setOverall(4)">&#9733;</span>
+            <span class="big-star" data-i="5" onclick="setOverall(5)">&#9733;</span>
+          </div>
+          <div class="rating-label" id="rating-label">Tap to rate</div>
+        </div>
+
+        <div class="section-card">
+          <div class="section-label">Rate each item</div>
+          <div class="item-row">
+            <div class="item-name">Chicken Burger</div>
+            <div class="mini-stars" id="item-0">
+              <span class="mini-star" onclick="setItem(0,1)">&#9733;</span>
+              <span class="mini-star" onclick="setItem(0,2)">&#9733;</span>
+              <span class="mini-star" onclick="setItem(0,3)">&#9733;</span>
+              <span class="mini-star" onclick="setItem(0,4)">&#9733;</span>
+              <span class="mini-star" onclick="setItem(0,5)">&#9733;</span>
+            </div>
+          </div>
+          <div class="item-row">
+            <div class="item-name">Masala Fries</div>
+            <div class="mini-stars" id="item-1">
+              <span class="mini-star" onclick="setItem(1,1)">&#9733;</span>
+              <span class="mini-star" onclick="setItem(1,2)">&#9733;</span>
+              <span class="mini-star" onclick="setItem(1,3)">&#9733;</span>
+              <span class="mini-star" onclick="setItem(1,4)">&#9733;</span>
+              <span class="mini-star" onclick="setItem(1,5)">&#9733;</span>
+            </div>
+          </div>
+          <div class="item-row">
+            <div class="item-name">Coke (500ml)</div>
+            <div class="mini-stars" id="item-2">
+              <span class="mini-star" onclick="setItem(2,1)">&#9733;</span>
+              <span class="mini-star" onclick="setItem(2,2)">&#9733;</span>
+              <span class="mini-star" onclick="setItem(2,3)">&#9733;</span>
+              <span class="mini-star" onclick="setItem(2,4)">&#9733;</span>
+              <span class="mini-star" onclick="setItem(2,5)">&#9733;</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <div class="section-label">What was great?</div>
+          <div class="tags-wrap" id="tags">
+            <span class="tag" onclick="toggleTag(this)">Taste</span>
+            <span class="tag" onclick="toggleTag(this)">Portion size</span>
+            <span class="tag" onclick="toggleTag(this)">Packaging</span>
+            <span class="tag" onclick="toggleTag(this)">Value for money</span>
+            <span class="tag" onclick="toggleTag(this)">Fast delivery</span>
+            <span class="tag" onclick="toggleTag(this)">Hot &amp; fresh</span>
+            <span class="tag" onclick="toggleTag(this)">Accurate order</span>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <div class="section-label">Write a review</div>
+          <textarea class="review-textarea" id="review-text" placeholder="Tell others what you liked or didn't like..." oninput="updateChar(this)"></textarea>
+          <div class="char-count" id="char-count">0 / 300</div>
+        </div>
+
+        <div class="section-card">
+          <div class="section-label">Add photos</div>
+          <div class="photo-row" id="photo-row">
+            <div class="photo-box" onclick="addPhoto(this)">
+              <div style="font-size:20px; color:#ccc;">+</div>
+              <div class="plus-label">Add photo</div>
+            </div>
+          </div>
+        </div>
+
+        <button class="submit-btn" id="submit-btn" onclick="submitReview()" disabled>Submit review</button>
+        <div style="height:16px;"></div>
+
+      </div>
+    </div>
+
+    <div class="success-screen" id="success-screen">
+      <div class="success-icon">&#10003;</div>
+      <h3>Thanks for your review!</h3>
+      <p>Your feedback helps thousands of Zomato users make better food decisions. We appreciate it.</p>
+      <div class="coupon-box">
+        <div class="c-label">REWARD FOR YOU</div>
+        <div class="c-code">THANKYOU60</div>
+        <div class="c-sub">&#8377;60 off on your next order &nbsp;&#183;&nbsp; Valid for 7 days</div>
+      </div>
+      <button class="done-btn" onclick="resetForm()">Back to orders</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+let overallRating = 0;
+const labels = ['','Terrible','Poor','Okay','Good','Excellent!'];
+const photos = [];
+
+function setOverall(n) {
+  overallRating = n;
+  document.querySelectorAll('#overall-stars .big-star').forEach((s,i) => s.classList.toggle('lit', i < n));
+  document.getElementById('rating-label').textContent = labels[n];
+  checkSubmit();
+}
+
+function setItem(row, n) {
+  const stars = document.querySelectorAll('#item-' + row + ' .mini-star');
+  stars.forEach((s,i) => s.classList.toggle('lit', i < n));
+  checkSubmit();
+}
+
+function toggleTag(el) {
+  el.classList.toggle('selected');
+}
+
+function updateChar(el) {
+  const val = Math.min(el.value.length, 300);
+  el.value = el.value.slice(0, 300);
+  document.getElementById('char-count').textContent = val + ' / 300';
+  checkSubmit();
+}
+
+function checkSubmit() {
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = overallRating === 0;
+}
+
+const foodEmoji = ['&#127828;','&#127829;','&#127830;','&#127831;','&#127832;'];
+let photoCount = 0;
+
+function addPhoto(btn) {
+  if (photoCount >= 4) return;
+  photoCount++;
+  const row = document.getElementById('photo-row');
+  const div = document.createElement('div');
+  div.className = 'photo-added';
+  div.innerHTML = foodEmoji[photoCount % foodEmoji.length] + '<div class="remove" onclick="removePhoto(this)">&#10005;</div>';
+  row.insertBefore(div, btn);
+  if (photoCount >= 4) btn.style.display = 'none';
+}
+
+function removePhoto(el) {
+  el.parentElement.remove();
+  photoCount--;
+  const btn = document.querySelector('.photo-box');
+  if (btn) btn.style.display = '';
+}
+
+function submitReview() {
+  if (overallRating === 0) return;
+  document.getElementById('review-form').style.display = 'none';
+  document.getElementById('success-screen').classList.add('show');
+}
+
+function resetForm() {
+  document.getElementById('review-form').style.display = '';
+  document.getElementById('success-screen').classList.remove('show');
+  overallRating = 0;
+  document.querySelectorAll('.big-star').forEach(s => s.classList.remove('lit'));
+  document.getElementById('rating-label').textContent = 'Tap to rate';
+  document.querySelectorAll('.mini-star').forEach(s => s.classList.remove('lit'));
+  document.querySelectorAll('.tag').forEach(t => t.classList.remove('selected'));
+  document.getElementById('review-text').value = '';
+  document.getElementById('char-count').textContent = '0 / 300';
+  document.getElementById('submit-btn').disabled = true;
+  photoCount = 0;
+  const row = document.getElementById('photo-row');
+  row.querySelectorAll('.photo-added').forEach(p => p.remove());
+  const btn = row.querySelector('.photo-box');
+  if (btn) btn.style.display = '';
+}
+</script>

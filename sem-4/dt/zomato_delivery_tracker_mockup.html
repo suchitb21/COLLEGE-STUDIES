@@ -1,0 +1,346 @@
+
+<style>
+  .phone-wrap {
+    display: flex;
+    justify-content: center;
+    padding: 2rem 1rem;
+    background: var(--color-background-secondary);
+    border-radius: var(--border-radius-lg);
+  }
+  .phone {
+    width: 340px;
+    background: var(--color-background-primary);
+    border-radius: 36px;
+    border: 2px solid var(--color-border-secondary);
+    overflow: hidden;
+    font-family: var(--font-sans);
+  }
+  .status-bar {
+    background: #E23744;
+    padding: 10px 20px 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .status-bar span { color: #fff; font-size: 11px; font-weight: 500; }
+  .app-header {
+    background: #E23744;
+    padding: 10px 16px 14px;
+  }
+  .app-header .back { color: rgba(255,255,255,0.85); font-size: 12px; margin-bottom: 4px; }
+  .app-header h2 { color: #fff; font-size: 16px; font-weight: 500; margin: 0; }
+  .app-header .subtext { color: rgba(255,255,255,0.75); font-size: 11px; margin-top: 2px; }
+
+  .content { padding: 16px; }
+
+  .confidence-card {
+    background: var(--color-background-secondary);
+    border-radius: var(--border-radius-lg);
+    padding: 14px 16px;
+    margin-bottom: 14px;
+    border: 0.5px solid var(--color-border-tertiary);
+  }
+  .confidence-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .confidence-label { font-size: 11px; color: var(--color-text-secondary); font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; }
+  .confidence-score { font-size: 28px; font-weight: 500; color: var(--color-text-primary); line-height: 1; }
+  .confidence-sub { font-size: 11px; color: var(--color-text-secondary); margin-top: 2px; }
+  .progress-bar-bg {
+    height: 6px;
+    background: var(--color-border-tertiary);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 0.6s ease;
+  }
+
+  .eta-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .eta-box {
+    flex: 1;
+    background: var(--color-background-secondary);
+    border-radius: var(--border-radius-md);
+    padding: 10px 12px;
+    border: 0.5px solid var(--color-border-tertiary);
+  }
+  .eta-box .lbl { font-size: 10px; color: var(--color-text-tertiary); margin-bottom: 3px; }
+  .eta-box .val { font-size: 18px; font-weight: 500; color: var(--color-text-primary); }
+  .eta-box .sub { font-size: 10px; color: var(--color-text-secondary); }
+
+  .timeline {
+    margin-bottom: 14px;
+  }
+  .timeline-title { font-size: 11px; font-weight: 500; color: var(--color-text-secondary); margin-bottom: 10px; letter-spacing: 0.04em; text-transform: uppercase; }
+  .timeline-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+    position: relative;
+  }
+  .tl-dot-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 18px;
+    flex-shrink: 0;
+  }
+  .tl-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .tl-dot.done { background: #E23744; border-color: #E23744; }
+  .tl-dot.active { background: #fff; border-color: #E23744; }
+  .tl-dot.pending { background: var(--color-background-secondary); border-color: var(--color-border-secondary); }
+  .tl-dot .check { width: 6px; height: 6px; border-bottom: 1.5px solid #fff; border-right: 1.5px solid #fff; transform: rotate(45deg) translate(-1px,-1px); }
+  .tl-dot.active .inner { width: 5px; height: 5px; border-radius: 50%; background: #E23744; }
+  .tl-line {
+    width: 1.5px;
+    background: var(--color-border-tertiary);
+    height: 16px;
+    margin-top: 2px;
+  }
+  .tl-line.done { background: #E23744; }
+  .tl-content { padding-top: 0; }
+  .tl-content .step-name { font-size: 13px; font-weight: 500; color: var(--color-text-primary); }
+  .tl-content .step-sub { font-size: 11px; color: var(--color-text-secondary); margin-top: 1px; }
+  .tl-content .step-name.muted { color: var(--color-text-secondary); font-weight: 400; }
+
+  .alert-card {
+    border-radius: var(--border-radius-md);
+    padding: 10px 12px;
+    margin-bottom: 14px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    border: 0.5px solid;
+  }
+  .alert-card.warn { background: var(--color-background-warning); border-color: var(--color-border-warning); }
+  .alert-card.info { background: var(--color-background-info); border-color: var(--color-border-info); }
+  .alert-card.success { background: var(--color-background-success); border-color: var(--color-border-success); }
+  .alert-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+  .alert-text .title { font-size: 12px; font-weight: 500; }
+  .alert-text .title.warn { color: var(--color-text-warning); }
+  .alert-text .title.info { color: var(--color-text-info); }
+  .alert-text .title.success { color: var(--color-text-success); }
+  .alert-text .body { font-size: 11px; color: var(--color-text-secondary); margin-top: 2px; }
+
+  .stage-controls {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    padding: 1rem;
+    flex-wrap: wrap;
+  }
+  .stage-btn {
+    padding: 6px 14px;
+    border-radius: 99px;
+    border: 0.5px solid var(--color-border-secondary);
+    background: var(--color-background-primary);
+    font-size: 12px;
+    cursor: pointer;
+    color: var(--color-text-secondary);
+    transition: all 0.15s;
+  }
+  .stage-btn.active {
+    background: #E23744;
+    border-color: #E23744;
+    color: #fff;
+  }
+  .stage-btn:hover:not(.active) { background: var(--color-background-secondary); }
+</style>
+
+<h2 class="sr-only">Zomato real-time delivery confidence tracker mockup — interactive mobile screen showing order progress, confidence score, and timeline</h2>
+
+<div class="stage-controls">
+  <button class="stage-btn active" onclick="setStage(0)">Order placed</button>
+  <button class="stage-btn" onclick="setStage(1)">Preparing</button>
+  <button class="stage-btn" onclick="setStage(2)">On the way</button>
+  <button class="stage-btn" onclick="setStage(3)">Delivered</button>
+</div>
+
+<div class="phone-wrap">
+  <div class="phone">
+    <div class="status-bar">
+      <span>9:41</span>
+      <span>&#9679;&#9679;&#9679; 98%</span>
+    </div>
+    <div class="app-header">
+      <div class="back">&#8592; My orders</div>
+      <h2>Tracking your order</h2>
+      <div class="subtext" id="rest-name">Burger Singh, Andheri West</div>
+    </div>
+    <div class="content">
+
+      <div class="confidence-card">
+        <div class="confidence-header">
+          <div>
+            <div class="confidence-label">Delivery confidence</div>
+            <div class="confidence-score" id="conf-score">87%</div>
+            <div class="confidence-sub" id="conf-sub">High chance of on-time delivery</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="confidence-label">Est. arrival</div>
+            <div style="font-size:20px; font-weight:500; color:var(--color-text-primary);" id="eta-main">8:17 PM</div>
+            <div class="confidence-sub" id="eta-range">± 5 min window</div>
+          </div>
+        </div>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="conf-bar" style="width:87%; background:#E23744;"></div>
+        </div>
+      </div>
+
+      <div class="eta-row">
+        <div class="eta-box">
+          <div class="lbl">Prep time</div>
+          <div class="val" id="prep-val">12</div>
+          <div class="sub" id="prep-sub">min remaining</div>
+        </div>
+        <div class="eta-box">
+          <div class="lbl">Transit time</div>
+          <div class="val" id="transit-val">18</div>
+          <div class="sub" id="transit-sub">min estimated</div>
+        </div>
+        <div class="eta-box">
+          <div class="lbl">Total ETA</div>
+          <div class="val" id="total-val">30</div>
+          <div class="sub">min total</div>
+        </div>
+      </div>
+
+      <div id="alert-area"></div>
+
+      <div class="timeline">
+        <div class="timeline-title">Order progress</div>
+        <div id="timeline-items"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+const stages = [
+  {
+    conf: 87, confColor: '#E23744', confText: 'High chance of on-time delivery',
+    eta: '8:17 PM', etaRange: '± 5 min window',
+    prep: { val: '12', sub: 'min remaining' },
+    transit: { val: '18', sub: 'min estimated' },
+    total: '30',
+    alert: { type: 'info', icon: '&#9432;', title: 'Order confirmed!', body: 'Restaurant has received your order and will start preparing shortly.' },
+    timeline: [
+      { label: 'Order placed', sub: 'Just now', state: 'done' },
+      { label: 'Restaurant preparing', sub: 'Starting soon', state: 'active' },
+      { label: 'Delivery partner picks up', sub: 'Est. 8:02 PM', state: 'pending' },
+      { label: 'Out for delivery', sub: 'Est. 8:09 PM', state: 'pending' },
+      { label: 'Delivered to you', sub: 'Est. 8:17 PM', state: 'pending' },
+    ]
+  },
+  {
+    conf: 74, confColor: '#E08A2E', confText: 'Restaurant slightly delayed',
+    eta: '8:23 PM', etaRange: '± 8 min window',
+    prep: { val: '6', sub: 'min remaining' },
+    transit: { val: '18', sub: 'min estimated' },
+    total: '24',
+    alert: { type: 'warn', icon: '&#9888;', title: 'Minor delay detected', body: 'Restaurant is busier than usual. Your ETA has moved by ~6 min. We\'re monitoring this.' },
+    timeline: [
+      { label: 'Order placed', sub: '8:00 PM', state: 'done' },
+      { label: 'Restaurant preparing', sub: 'In progress', state: 'active' },
+      { label: 'Delivery partner picks up', sub: 'Est. 8:08 PM', state: 'pending' },
+      { label: 'Out for delivery', sub: 'Est. 8:15 PM', state: 'pending' },
+      { label: 'Delivered to you', sub: 'Est. 8:23 PM', state: 'pending' },
+    ]
+  },
+  {
+    conf: 91, confColor: '#2E9E6B', confText: 'Partner is nearby — almost there!',
+    eta: '8:19 PM', etaRange: '± 3 min window',
+    prep: { val: '--', sub: 'food is ready' },
+    transit: { val: '9', sub: 'min away' },
+    total: '9',
+    alert: { type: 'success', icon: '&#10003;', title: 'Your order is on the way!', body: 'Ravi (4.8 &#9733;) picked up your order. He is 2.3 km away from you.' },
+    timeline: [
+      { label: 'Order placed', sub: '8:00 PM', state: 'done' },
+      { label: 'Restaurant prepared', sub: '8:06 PM', state: 'done' },
+      { label: 'Ravi picked up your order', sub: '8:08 PM', state: 'done' },
+      { label: 'Out for delivery', sub: 'In progress — 2.3 km away', state: 'active' },
+      { label: 'Delivered to you', sub: 'Est. 8:19 PM', state: 'pending' },
+    ]
+  },
+  {
+    conf: 100, confColor: '#2E9E6B', confText: 'Your order has arrived!',
+    eta: '8:17 PM', etaRange: 'Delivered on time',
+    prep: { val: '--', sub: 'completed' },
+    transit: { val: '--', sub: 'completed' },
+    total: '17',
+    alert: { type: 'success', icon: '&#10003;', title: 'Delivered! Enjoy your meal', body: 'Delivered at 8:17 PM. Total time: 17 min. Rate your experience below.' },
+    timeline: [
+      { label: 'Order placed', sub: '8:00 PM', state: 'done' },
+      { label: 'Restaurant prepared', sub: '8:06 PM', state: 'done' },
+      { label: 'Ravi picked up your order', sub: '8:08 PM', state: 'done' },
+      { label: 'Out for delivery', sub: '8:09 PM — 2.3 km', state: 'done' },
+      { label: 'Delivered to you', sub: '8:17 PM', state: 'done' },
+    ]
+  }
+];
+
+function setStage(i) {
+  document.querySelectorAll('.stage-btn').forEach((b,j) => b.classList.toggle('active', i===j));
+  const s = stages[i];
+  document.getElementById('conf-score').textContent = s.conf + '%';
+  document.getElementById('conf-sub').textContent = s.confText;
+  document.getElementById('conf-bar').style.width = s.conf + '%';
+  document.getElementById('conf-bar').style.background = s.confColor;
+  document.getElementById('eta-main').textContent = s.eta;
+  document.getElementById('eta-range').textContent = s.etaRange;
+  document.getElementById('prep-val').textContent = s.prep.val;
+  document.getElementById('prep-sub').textContent = s.prep.sub;
+  document.getElementById('transit-val').textContent = s.transit.val;
+  document.getElementById('transit-sub').textContent = s.transit.sub;
+  document.getElementById('total-val').textContent = s.total;
+
+  const alertArea = document.getElementById('alert-area');
+  alertArea.innerHTML = `<div class="alert-card ${s.alert.type}">
+    <div class="alert-icon">${s.alert.icon}</div>
+    <div class="alert-text">
+      <div class="title ${s.alert.type}">${s.alert.title}</div>
+      <div class="body">${s.alert.body}</div>
+    </div>
+  </div>`;
+
+  const tl = document.getElementById('timeline-items');
+  tl.innerHTML = s.timeline.map((item, idx) => {
+    const isLast = idx === s.timeline.length - 1;
+    const dotClass = item.state === 'done' ? 'done' : item.state === 'active' ? 'active' : 'pending';
+    const innerDot = item.state === 'done' ? '<div class="check"></div>' : item.state === 'active' ? '<div class="inner"></div>' : '';
+    const lineColor = item.state === 'done' ? 'done' : '';
+    return `<div class="timeline-item">
+      <div class="tl-dot-wrap">
+        <div class="tl-dot ${dotClass}">${innerDot}</div>
+        ${!isLast ? `<div class="tl-line ${lineColor}"></div>` : ''}
+      </div>
+      <div class="tl-content" style="padding-bottom: ${!isLast ? '6px' : '0'}">
+        <div class="step-name ${item.state === 'pending' ? 'muted' : ''}">${item.label}</div>
+        <div class="step-sub">${item.sub}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+setStage(0);
+</script>

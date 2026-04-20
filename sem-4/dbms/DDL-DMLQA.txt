@@ -1,0 +1,3 @@
+Q.) What is a DDL constraint ?
+A.) A constraint is a restriction on data that can be stored in a table. Like the datatype of a column, constraint form part of the definition of the table. Essentially there are two types of constraint: integrity constraints which control the structural aspects of the data, and data constraints which define the domain of a column.
+

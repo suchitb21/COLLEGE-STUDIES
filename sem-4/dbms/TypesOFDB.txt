@@ -1,0 +1,124 @@
+Looking at your style and the module 6 questions, let me craft all 4 answers!
+
+
+
+Q.) Explain Cloud Database with example
+
+A.) A Cloud Database is a database that is built, deployed and accessed through a cloud computing platform over the internet, rather than being installed on a local physical server. It is managed by a cloud service provider and can be accessed from anywhere at any time.
+
+Cloud databases can be of two types :
+
+1.) Traditional Database on Cloud : A regular database ( like MySQL or Oracle ) that runs on a virtual machine hosted on the cloud.
+
+2.) Database as a Service ( DBaaS ) : The cloud provider fully manages the database — including setup, maintenance, backups and scaling. The user only focuses on using the database.
+
+Key Characteristics :
+
+1.) Scalability : Resources ( storage, computing power ) can be scaled up or down based on demand easily.
+
+2.) Accessibility : The database can be accessed from anywhere using the internet.
+
+3.) Availability : Cloud databases offer high availability with automatic backups and failover support.
+
+4.) Pay-as-you-go : Users are charged only for the resources they actually use.
+
+Example :
+
+Amazon RDS ( Relational Database Service ) is a popular cloud database service by AWS. A company like Zomato or Swiggy can use Amazon RDS to store customer orders, restaurant data and payment details — without managing any physical server. If traffic increases during peak hours, the database automatically scales up to handle the load.
+
+Other examples : Google Cloud Spanner, Microsoft Azure SQL Database, MongoDB Atlas.
+
+ADVANTAGE : No hardware setup required, Easy scalability, Automatic backups, High availability, Cost effective
+DISADVANTAGE : Requires internet connection, Data privacy concerns, Vendor dependency ( vendor lock-in ), Ongoing subscription cost
+
+
+
+Q.) Explain Distributed Database with example
+
+A.) A Distributed Database is a database in which data is stored across multiple physical locations — either on different computers in the same building or across different geographical locations connected through a network. To the user, it appears as a single unified database.
+
+Types of Distributed Databases :
+
+1.) Homogeneous Distributed Database : All the sites use the same DBMS software and operating system. Easy to manage.
+Example : Same MySQL database running on servers in Mumbai, Delhi and Bangalore.
+
+2.) Heterogeneous Distributed Database : Different sites may use different DBMS software or operating systems. More complex to manage.
+Example : One site uses Oracle, another uses MySQL — but they are connected and work together.
+
+Key Concepts :
+
+1.) Fragmentation : Data is split and distributed across different sites.
+- Horizontal Fragmentation : Different rows stored at different sites. ( e.g., Mumbai customers at Mumbai server, Delhi customers at Delhi server )
+- Vertical Fragmentation : Different columns stored at different sites.
+
+2.) Replication : Same copy of data is stored at multiple sites for reliability and faster access.
+
+3.) Transparency : The user does not need to know where the data is physically stored — the system handles it automatically.
+
+Example :
+
+A bank like SBI has branches all over India. Customer data for Mumbai branch is stored on a Mumbai server, and data for Delhi branch is stored on a Delhi server. Yet, when a customer checks their balance from any ATM in India, the system fetches data from the correct server transparently — this is a distributed database in action.
+
+ADVANTAGE : Faster local access, High availability, Fault tolerance ( if one site fails, others still work ), Easy to scale by adding more sites
+DISADVANTAGE : Complex design and maintenance, Data consistency is harder to maintain, Network failures can cause problems, Higher cost of setup
+
+
+
+Q.) Explain NoSQL Database with example
+
+A.) NoSQL ( Not Only SQL ) is a type of database that does not use the traditional relational table-based structure. It is designed to handle large volumes of unstructured, semi-structured or rapidly changing data. NoSQL databases are highly scalable and flexible, making them suitable for modern web applications and big data.
+
+NoSQL databases do not require a fixed schema, meaning different records can have different fields.
+
+Types of NoSQL Databases :
+
+1.) Document Store : Data is stored as documents ( usually in JSON or BSON format ). Each document can have a different structure.
+Example : MongoDB — stores user profiles, product catalogs.
+
+2.) Key-Value Store : Data is stored as key-value pairs. Very fast for simple lookups.
+Example : Redis — used for caching, session management.
+
+3.) Column-Family Store : Data is stored in columns rather than rows. Efficient for analytical queries on large datasets.
+Example : Apache Cassandra — used for time-series data, IoT data.
+
+4.) Graph Database : Data is stored as nodes and edges representing relationships. Best for highly connected data.
+Example : Neo4j — used for social networks, recommendation engines.
+
+Example :
+
+Instagram uses MongoDB ( a NoSQL document database ) to store user posts, comments and likes. Each post document can contain different fields — some have location tags, some have multiple images, some have none. This flexibility is not possible in a traditional relational database.
+
+ADVANTAGE : Flexible schema ( no rigid structure ), Handles large volumes of data, High scalability and performance, Suitable for unstructured data
+DISADVANTAGE : No standard query language like SQL, Weaker consistency guarantees, Not suitable for complex relational queries, Less mature compared to relational databases
+
+
+
+Q.) Explain Object-Oriented Databases with example
+
+A.) An Object-Oriented Database ( OODB ) is a database that stores data in the form of objects, just like object-oriented programming languages ( such as Java or C++ ). Each object contains both data ( attributes ) and behavior ( methods ), and objects are organized using concepts like classes, inheritance and encapsulation.
+
+Object-Oriented Databases combine the features of a traditional DBMS with those of object-oriented programming.
+
+Key Concepts :
+
+1.) Object : The basic unit of storage. An object has attributes ( data ) and methods ( functions ).
+Example : A Student object has attributes like Roll_no, Name, Marks and a method like calculateGrade().
+
+2.) Class : A blueprint or template for creating objects. All objects of the same class share the same structure.
+Example : Student is a class. Each individual student record is an object of that class.
+
+3.) Inheritance : A class can inherit attributes and methods from a parent class, promoting reusability.
+Example : A GraduateStudent class can inherit from the Student class and add extra attributes like ThesisTitle.
+
+4.) Encapsulation : Data and the methods that operate on it are bundled together inside an object, hiding internal details.
+
+5.) Persistence : Objects created in a program can be permanently stored in the database and retrieved later, maintaining their state.
+
+Example :
+
+Consider a Hospital Management System. A Patient object stores attributes like PatientID, Name, Age, Diagnosis and also has methods like getReport() or scheduleSurgery(). This entire object — with its data and behavior — is stored directly in an Object-Oriented Database. In a relational database, this would require splitting data across multiple tables with joins, but OODB stores it naturally as a single object.
+
+Popular Object-Oriented Databases : ObjectDB, db4o, Versant Object Database.
+
+ADVANTAGE : Naturally models real-world entities, Supports complex data types, Reusability through inheritance, No impedance mismatch between application and database
+DISADVANTAGE : Complex to design and query, Lack of universal standard, Not suitable for simple tabular data, Less widely adopted compared to relational databases

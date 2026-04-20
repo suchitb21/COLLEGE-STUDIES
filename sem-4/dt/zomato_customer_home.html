@@ -1,0 +1,290 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+.wrap { display: flex; justify-content: center; padding: 2rem 1rem; background: #f5f5f0; border-radius: 16px; }
+.phone { width: 340px; background: #f7f7f7; border-radius: 36px; border: 2px solid #ddd; overflow: hidden; font-family: var(--font-sans); max-height: 680px; display: flex; flex-direction: column; }
+.status-bar { background: #E23744; padding: 10px 20px 6px; display: flex; justify-content: space-between; flex-shrink: 0; }
+.status-bar span { color: #fff; font-size: 11px; font-weight: 500; }
+
+.header { background: #E23744; padding: 10px 16px 14px; flex-shrink: 0; }
+.loc-row { display: flex; align-items: center; gap: 5px; margin-bottom: 10px; }
+.loc-pin { font-size: 12px; }
+.loc-text { font-size: 13px; font-weight: 500; color: #fff; }
+.loc-arrow { font-size: 10px; color: rgba(255,255,255,0.7); margin-left: 2px; }
+.loc-sub { font-size: 10px; color: rgba(255,255,255,0.65); margin-left: auto; }
+.search-bar { background: #fff; border-radius: 10px; padding: 9px 12px; display: flex; align-items: center; gap: 8px; }
+.search-icon { font-size: 13px; color: #bbb; }
+.search-text { font-size: 12px; color: #bbb; flex: 1; }
+.search-mic { font-size: 13px; color: #E23744; }
+
+.scroll-body { overflow-y: auto; flex: 1; padding-bottom: 60px; }
+.scroll-body::-webkit-scrollbar { display: none; }
+
+.section { padding: 14px 14px 0; }
+.sec-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.sec-title { font-size: 13px; font-weight: 500; color: #1a1a1a; }
+.sec-link { font-size: 11px; color: #E23744; }
+
+.cat-scroll { display: flex; gap: 10px; overflow-x: auto; padding: 0 14px 14px; }
+.cat-scroll::-webkit-scrollbar { display: none; }
+.cat-item { display: flex; flex-direction: column; align-items: center; gap: 5px; flex-shrink: 0; cursor: pointer; }
+.cat-circle { width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; border: 2px solid transparent; transition: all 0.15s; }
+.cat-item.active .cat-circle { border-color: #E23744; background: #fde8ea; }
+.cat-label { font-size: 10px; color: #555; white-space: nowrap; }
+.cat-item.active .cat-label { color: #E23744; font-weight: 500; }
+
+.offer-scroll { display: flex; gap: 10px; overflow-x: auto; padding: 0 14px 14px; }
+.offer-scroll::-webkit-scrollbar { display: none; }
+.offer-card { flex-shrink: 0; width: 200px; border-radius: 12px; overflow: hidden; border: 0.5px solid #eee; background: #fff; cursor: pointer; }
+.offer-img { height: 76px; display: flex; align-items: center; justify-content: center; font-size: 32px; }
+.offer-body { padding: 8px 10px; }
+.offer-tag { font-size: 9px; font-weight: 500; padding: 2px 6px; border-radius: 99px; background: #fde8ea; color: #E23744; display: inline-block; margin-bottom: 4px; }
+.offer-title { font-size: 12px; font-weight: 500; color: #1a1a1a; }
+.offer-sub { font-size: 10px; color: #888; margin-top: 2px; }
+
+.rest-list { display: flex; flex-direction: column; gap: 10px; padding: 0 14px 14px; }
+.rest-card { background: #fff; border-radius: 12px; border: 0.5px solid #eee; overflow: hidden; cursor: pointer; transition: all 0.15s; }
+.rest-card:hover { border-color: #E23744; }
+.rest-img { height: 100px; display: flex; align-items: center; justify-content: center; font-size: 40px; position: relative; }
+.rest-badge { position: absolute; top: 8px; left: 8px; background: #E23744; color: #fff; font-size: 9px; font-weight: 500; padding: 3px 7px; border-radius: 99px; }
+.rest-fav { position: absolute; top: 8px; right: 8px; width: 24px; height: 24px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; cursor: pointer; border: 0.5px solid #eee; }
+.rest-body { padding: 10px 12px; }
+.rest-name { font-size: 13px; font-weight: 500; color: #1a1a1a; }
+.rest-meta { display: flex; align-items: center; gap: 6px; margin-top: 4px; flex-wrap: wrap; }
+.rest-rating { font-size: 11px; font-weight: 500; color: #1a1a1a; background: #f0f0f0; padding: 2px 6px; border-radius: 4px; display: flex; align-items: center; gap: 2px; }
+.rest-rating.high { background: #DCFCE7; color: #166534; }
+.rest-dot { width: 3px; height: 3px; border-radius: 50%; background: #ccc; }
+.rest-info { font-size: 10px; color: #888; }
+.rest-tags { display: flex; gap: 5px; margin-top: 6px; flex-wrap: wrap; }
+.rest-tag { font-size: 9px; color: #666; background: #f5f5f5; padding: 2px 7px; border-radius: 99px; }
+.price-band { font-size: 10px; color: #888; }
+
+.filter-row { display: flex; gap: 6px; overflow-x: auto; padding: 0 14px 10px; }
+.filter-row::-webkit-scrollbar { display: none; }
+.filter-chip { flex-shrink: 0; padding: 5px 11px; border-radius: 99px; border: 1px solid #e0e0e0; background: #fff; font-size: 11px; color: #555; cursor: pointer; transition: all 0.15s; white-space: nowrap; display: flex; align-items: center; gap: 4px; }
+.filter-chip.active { background: #E23744; border-color: #E23744; color: #fff; }
+.filter-chip:hover:not(.active) { border-color: #E23744; color: #E23744; }
+
+.bottom-nav { position: absolute; bottom: 0; left: 0; right: 0; height: 52px; background: #fff; border-top: 0.5px solid #eee; display: flex; align-items: center; justify-content: space-around; padding-bottom: 4px; }
+.nav-item { display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer; padding: 6px 14px; }
+.nav-icon { font-size: 16px; color: #bbb; }
+.nav-icon.active { color: #E23744; }
+.nav-label { font-size: 9px; color: #bbb; }
+.nav-label.active { color: #E23744; font-weight: 500; }
+.nav-cart-wrap { position: relative; }
+.cart-badge { position: absolute; top: -3px; right: -3px; background: #E23744; color: #fff; font-size: 8px; width: 14px; height: 14px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 500; }
+
+.phone-inner { position: relative; flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+</style>
+
+<h2 class="sr-only">Zomato customer home screen mockup — food discovery with categories, offers, filters and restaurant listings</h2>
+
+<div class="wrap">
+  <div class="phone">
+    <div class="status-bar">
+      <span>9:41</span>
+      <span>&#9679;&#9679;&#9679; 98%</span>
+    </div>
+    <div class="header">
+      <div class="loc-row">
+        <span class="loc-pin">&#128205;</span>
+        <span class="loc-text">Andheri West</span>
+        <span class="loc-arrow">&#9660;</span>
+        <span class="loc-sub">Hi, Rahul &#128075;</span>
+      </div>
+      <div class="search-bar">
+        <span class="search-icon">&#128269;</span>
+        <span class="search-text">Search for restaurants or dishes...</span>
+        <span class="search-mic">&#127908;</span>
+      </div>
+    </div>
+
+    <div class="phone-inner">
+      <div class="scroll-body">
+
+        <div style="padding: 12px 14px 0;">
+          <div style="display:flex; gap:8px; overflow-x:auto;" class="offer-scroll" id="banner-row"></div>
+        </div>
+
+        <div style="padding: 12px 14px 0;">
+          <div class="sec-header"><span class="sec-title">What are you craving?</span></div>
+        </div>
+        <div class="cat-scroll" id="cat-row"></div>
+
+        <div class="filter-row" id="filter-row"></div>
+
+        <div class="section">
+          <div class="sec-header">
+            <span class="sec-title" id="rest-heading">Top restaurants near you</span>
+            <span class="sec-link">Sort &#9663;</span>
+          </div>
+        </div>
+        <div class="rest-list" id="rest-list"></div>
+
+      </div>
+
+      <div style="position:absolute; bottom:0; left:0; right:0; height:52px; background:#fff; border-top:0.5px solid #eee; display:flex; align-items:center; justify-content:space-around; padding-bottom:4px;">
+        <div class="nav-item" onclick="setNav(this)">
+          <div class="nav-icon active">&#127968;</div>
+          <div class="nav-label active">Home</div>
+        </div>
+        <div class="nav-item" onclick="setNav(this)">
+          <div class="nav-icon">&#128269;</div>
+          <div class="nav-label">Search</div>
+        </div>
+        <div class="nav-item nav-cart-wrap" onclick="setNav(this)">
+          <div class="nav-icon">&#127873;</div>
+          <div class="nav-label">Offers</div>
+        </div>
+        <div class="nav-item" onclick="setNav(this)">
+          <div style="position:relative; display:inline-block;">
+            <span class="nav-icon">&#128722;</span>
+            <span class="cart-badge" id="cart-count">2</span>
+          </div>
+          <div class="nav-label">Cart</div>
+        </div>
+        <div class="nav-item" onclick="setNav(this)">
+          <div class="nav-icon">&#128100;</div>
+          <div class="nav-label">Profile</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const cats = [
+  { icon:'&#127828;', label:'Burgers', bg:'#FEF3C7' },
+  { icon:'&#127829;', label:'Pizza', bg:'#FEE2E2' },
+  { icon:'&#127825;', label:'Chinese', bg:'#FCE7F3' },
+  { icon:'&#127844;', label:'Biryani', bg:'#FEF9C3' },
+  { icon:'&#129367;', label:'Sushi', bg:'#DBEAFE' },
+  { icon:'&#127839;', label:'Desserts', bg:'#F3E8FF' },
+  { icon:'&#129371;', label:'Healthy', bg:'#DCFCE7' },
+  { icon:'&#9749;', label:'Drinks', bg:'#E0F2FE' },
+];
+
+const banners = [
+  { emoji:'&#127819;', bg:'#FEE2E2', tag:'LIMITED', title:'50% off up to ₹120', sub:'Use code FLAT50' },
+  { emoji:'&#128176;', bg:'#FEF9C3', tag:'FREE DELIVERY', title:'No delivery fee', sub:'Orders above ₹299' },
+  { emoji:'&#127828;', bg:'#DCFCE7', tag:'NEW', title:'New on Zomato', sub:'Burger Singh 2.0 is here' },
+];
+
+const filters = ['All','Fast delivery','Under ₹150','Pure veg','Rating 4.0+','New arrivals'];
+
+const allRests = [
+  { emoji:'&#127828;', bg:'#FEE2E2', name:'Burger Singh', tags:['Burgers','American','Fast food'], rating:'4.4', ratingHigh:true, time:'22 min', price:'₹200 for two', badge:'20% OFF', fav:false, cat:'Burgers' },
+  { emoji:'&#127829;', bg:'#FEF3C7', name:'Pizza Hut', tags:['Pizza','Italian','Fast food'], rating:'4.1', ratingHigh:false, time:'30 min', price:'₹400 for two', badge:null, fav:true, cat:'Pizza' },
+  { emoji:'&#127844;', bg:'#FEF9C3', name:'Behrouz Biryani', tags:['Biryani','Mughlai','North Indian'], rating:'4.6', ratingHigh:true, time:'35 min', price:'₹350 for two', badge:'FREE ITEM', fav:false, cat:'Biryani' },
+  { emoji:'&#127825;', bg:'#FCE7F3', name:'Wow! Momo', tags:['Chinese','Momos','Tibetan'], rating:'3.9', ratingHigh:false, time:'18 min', price:'₹150 for two', badge:null, fav:false, cat:'Chinese' },
+  { emoji:'&#129367;', bg:'#DBEAFE', name:'Sushi Samba', tags:['Japanese','Sushi','Asian'], rating:'4.5', ratingHigh:true, time:'40 min', price:'₹600 for two', badge:'NEW', fav:false, cat:'Sushi' },
+  { emoji:'&#127839;', bg:'#F3E8FF', name:'Theobroma', tags:['Desserts','Bakery','Cakes'], rating:'4.7', ratingHigh:true, time:'25 min', price:'₹300 for two', badge:'TOP RATED', fav:true, cat:'Desserts' },
+];
+
+let activeFilter = 'All';
+let activeCat = null;
+const favSet = new Set(['Pizza Hut','Theobroma']);
+
+function renderBanners() {
+  document.getElementById('banner-row').innerHTML = banners.map(b =>
+    `<div class="offer-card" style="flex-shrink:0; width:170px;">
+      <div class="offer-img" style="background:${b.bg}">${b.emoji}</div>
+      <div class="offer-body">
+        <span class="offer-tag">${b.tag}</span>
+        <div class="offer-title">${b.title}</div>
+        <div class="offer-sub">${b.sub}</div>
+      </div>
+    </div>`
+  ).join('');
+}
+
+function renderCats() {
+  document.getElementById('cat-row').innerHTML = cats.map(c =>
+    `<div class="cat-item${activeCat===c.label?' active':''}" onclick="setCat('${c.label}')">
+      <div class="cat-circle" style="background:${c.bg}">${c.icon}</div>
+      <div class="cat-label">${c.label}</div>
+    </div>`
+  ).join('');
+}
+
+function renderFilters() {
+  document.getElementById('filter-row').innerHTML = filters.map(f =>
+    `<div class="filter-chip${activeFilter===f?' active':''}" onclick="setFilter('${f}')">${f}</div>`
+  ).join('');
+}
+
+function renderRests() {
+  let list = [...allRests];
+  if (activeCat) list = list.filter(r => r.cat === activeCat);
+  if (activeFilter === 'Fast delivery') list = list.filter(r => parseInt(r.time) <= 25);
+  if (activeFilter === 'Under ₹150') list = list.filter(r => parseInt(r.price) <= 150);
+  if (activeFilter === 'Pure veg') list = list.filter(r => ['Sushi Samba','Theobroma','Wow! Momo'].includes(r.name));
+  if (activeFilter === 'Rating 4.0+') list = list.filter(r => parseFloat(r.rating) >= 4.0);
+  if (activeFilter === 'New arrivals') list = list.filter(r => r.badge === 'NEW');
+
+  const heading = activeCat ? `${activeCat} restaurants` : 'Top restaurants near you';
+  document.getElementById('rest-heading').textContent = heading;
+
+  document.getElementById('rest-list').innerHTML = list.length === 0
+    ? `<div style="text-align:center; padding:24px; color:#bbb; font-size:12px;">No restaurants match this filter</div>`
+    : list.map(r =>
+    `<div class="rest-card" onclick="openRest('${r.name}')">
+      <div class="rest-img" style="background:${r.bg}">
+        ${r.badge ? `<div class="rest-badge">${r.badge}</div>` : ''}
+        <span style="font-size:42px">${r.emoji}</span>
+        <div class="rest-fav" onclick="event.stopPropagation(); toggleFav(this,'${r.name}')">${favSet.has(r.name)?'&#10084;':'&#9825;'}</div>
+      </div>
+      <div class="rest-body">
+        <div class="rest-name">${r.name}</div>
+        <div class="rest-meta">
+          <span class="rest-rating${r.ratingHigh?' high':''}">&#9733; ${r.rating}</span>
+          <span class="rest-dot"></span>
+          <span class="rest-info">${r.time}</span>
+          <span class="rest-dot"></span>
+          <span class="rest-info">${r.price}</span>
+        </div>
+        <div class="rest-tags">${r.tags.map(t=>`<span class="rest-tag">${t}</span>`).join('')}</div>
+      </div>
+    </div>`
+  ).join('');
+}
+
+function setCat(cat) {
+  activeCat = activeCat === cat ? null : cat;
+  activeFilter = 'All';
+  renderCats();
+  renderFilters();
+  renderRests();
+}
+
+function setFilter(f) {
+  activeFilter = f;
+  activeCat = null;
+  renderCats();
+  renderFilters();
+  renderRests();
+}
+
+function toggleFav(el, name) {
+  if (favSet.has(name)) { favSet.delete(name); el.innerHTML = '&#9825;'; }
+  else { favSet.add(name); el.innerHTML = '&#10084;'; }
+}
+
+function openRest(name) {
+  sendPrompt('Tell me more about ' + name + ' on Zomato — what are their best dishes and pricing?');
+}
+
+function setNav(el) {
+  document.querySelectorAll('.nav-item').forEach(n => {
+    n.querySelector('.nav-icon').classList.remove('active');
+    n.querySelector('.nav-label').classList.remove('active');
+  });
+  el.querySelector('.nav-icon').classList.add('active');
+  el.querySelector('.nav-label').classList.add('active');
+}
+
+renderBanners();
+renderCats();
+renderFilters();
+renderRests();
+</script>
