@@ -1,0 +1,200 @@
+
+A trigger is a special type of stored procedure in a database that automatically executes (or "fires") in response to specific events on a particular table or view in a database. Triggers are used to enforce business rules, maintain data integrity, and automate complex operations.
+Triggers are event-driven procedures that execute automatically when specified database events occur (INSERT, UPDATE, DELETE).
+Key Characteristics:
+
+Automatically executed when specified event occurs
+Can execute before or after the event
+Can be fired once per statement or once per row
+Can prevent invalid transactions
+Used for maintaining referential integrity
+Used for enforcing complex business rules
+Can modify data or prevent operations
+
+WHEN DO TRIGGERS FIRE?
+Triggers fire in response to three main events:
+
+INSERT - When new rows are added to table
+UPDATE - When existing rows are modified
+DELETE - When rows are removed from table
+
+Triggers can fire at two different times:
+
+BEFORE - Before the triggering event occurs
+AFTER - After the triggering event occurs
+
+Triggers can fire for:
+
+Each Row (FOR EACH ROW) - Once for each affected row
+Each Statement (FOR EACH STATEMENT) - Once per SQL statement
+
+TRIGGER SYNTAX
+BASIC SYNTAX FOR CREATING TRIGGER:
+CREATE TRIGGER trigger_name
+{BEFORE | AFTER} {INSERT | UPDATE | DELETE}
+ON table_name
+FOR EACH ROW
+BEGIN
+-- Trigger body (SQL statements)
+SQL statements;
+END;
+Breaking down syntax:
+CREATE TRIGGER trigger_name
+
+Creates new trigger with given name
+
+{BEFORE | AFTER}
+
+BEFORE: Execute trigger before the event
+AFTER: Execute trigger after the event
+
+{INSERT | UPDATE | DELETE}
+
+Specifies which event triggers the trigger
+Can have multiple events: ON INSERT OR ON UPDATE OR ON DELETE
+
+ON table_name
+
+Specifies which table this trigger is attached to
+
+FOR EACH ROW
+
+Executes trigger once for each affected row
+FOR EACH STATEMENT executes once per statement
+
+BEGIN...END
+
+Contains the actual trigger logic
+
+REFERENCING NEW AND OLD VALUES
+When working with row-level triggers, you can reference:
+NEW - Refers to new values being inserted or updated
+OLD - Refers to old values before update or delete
+Available in different contexts:
+INSERT trigger: NEW values available, OLD values NULL
+UPDATE trigger: Both NEW and OLD values available
+DELETE trigger: OLD values available, NEW values NULL
+EXAMPLE 1: PREVENT SALARY BELOW MINIMUM
+Scenario: Prevent any employee salary from going below 10000
+CREATE TRIGGER prevent_low_salary
+BEFORE UPDATE ON emp
+FOR EACH ROW
+BEGIN
+IF NEW.salary < 10000 THEN
+SIGNAL SQLSTATE '45000'
+SET MESSAGE_TEXT = 'Salary cannot be below 10000';
+END IF;
+END;
+How it works:
+
+Fires BEFORE any UPDATE on emp table
+Checks if new salary is less than 10000
+If true, raises error and prevents update
+If false, allows update to proceed
+
+Testing:
+UPDATE emp SET salary = 9000 WHERE empid = 101;
+-- Error: Salary cannot be below 10000
+UPDATE emp SET salary = 15000 WHERE empid = 101;
+-- Success: Update allowed
+EXAMPLE 2: AUTOMATICALLY UPDATE TIMESTAMP
+Scenario: Update last_modified timestamp whenever employee record changes
+CREATE TRIGGER update_emp_timestamp
+BEFORE UPDATE ON emp
+FOR EACH ROW
+BEGIN
+SET NEW.last_modified = NOW();
+END;
+How it works:
+
+Before updating any emp record
+Automatically set last_modified to current date/time
+The modified timestamp is inserted into NEW values
+Updated record reflects current timestamp
+
+Testing:
+UPDATE emp SET salary = 20000 WHERE empid = 101;
+SELECT empid, salary, last_modified FROM emp WHERE empid = 101;
+-- Shows current timestamp in last_modified column
+
+COMMON TRIGGER PATTERNS
+Pattern 1: Validation Trigger (BEFORE INSERT/UPDATE)
+
+Check data validity
+Prevent invalid inserts/updates
+Raise errors for constraint violations
+
+Pattern 2: Audit Trigger (AFTER INSERT/UPDATE/DELETE)
+
+Log all changes
+Maintain history
+Track who changed what and when
+
+Pattern 3: Cascade Trigger (AFTER DELETE)
+
+Delete related records
+Maintain referential integrity
+Cleanup dependent data
+
+Pattern 4: Default Value Trigger (BEFORE INSERT)
+
+Set default values
+Auto-generate IDs
+Calculate derived values
+
+Pattern 5: Update Propagation Trigger (AFTER UPDATE)
+
+Update related tables
+Synchronize data
+Maintain consistency
+
+ADVANTAGES OF TRIGGERS
+
+Enforces business rules at database level
+Maintains data integrity automatically
+Prevents invalid data entry
+Reduces application code complexity
+Ensures consistency across applications
+Provides automatic audit trails
+Prevents cascading errors
+Centralizes data logic in database
+Improves performance for repetitive tasks
+Ensures data validation happens consistently
+
+DISADVANTAGES OF TRIGGERS
+
+Difficult to debug and maintain
+Hidden logic makes database behavior unpredictable
+Performance overhead for every affected row
+Can cause unexpected side effects
+Hard to track execution flow
+Triggers can trigger other triggers (cascading)
+Not easily portable across databases
+Difficult to test independently
+Can cause deadlocks in complex scenarios
+Increases database server load
+
+IMPORTANT RULES FOR TRIGGERS
+
+Trigger name must be unique in database
+Cannot use GRANT or REVOKE in trigger
+Cannot use transactions (COMMIT, ROLLBACK)
+Cannot modify table structure (ALTER TABLE)
+Cannot create/drop triggers from within trigger
+Each table can have maximum 6 triggers (3 BEFORE + 3 AFTER for INSERT/UPDATE/DELETE)
+Trigger execution order follows creation order
+Cannot reference temporary tables
+NEW and OLD are read-only except in BEFORE triggers
+Recursive triggers should be avoided
+
+HOW TO VIEW TRIGGERS
+Show all triggers in database:
+SHOW TRIGGERS;
+Show triggers for specific table:
+SHOW TRIGGERS WHERE table = 'emp';
+View trigger definition:
+SHOW CREATE TRIGGER trigger_name;
+HOW TO DROP TRIGGER
+DROP TRIGGER trigger_name;
+Drop with error handling:
+DROP TRIGGER IF EXISTS trigger_name;

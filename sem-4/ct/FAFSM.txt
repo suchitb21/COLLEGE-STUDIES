@@ -1,0 +1,31 @@
+Q.) Differentiate between DFA and NFA
+
+A.)
+To understand the difference between a Deterministic Finite Automaton (DFA) and a Nondeterministic Finite Automaton (NFA), it helps to look at how they process information. Both are theoretical models of computation used to recognize regular languages, but their internal mechanics and routing logic are fundamentally different.
+
+The Core Philosophy: Certainty vs. Parallelism
+
+A DFA is strictly deterministic. For every state and every possible input symbol in your alphabet, there is exactly one guaranteed, strictly defined path to the next state. It behaves like a standard procedural program. You feed it a string, and it executes a single sequence of steps. If it ends in an accepting state, the string is accepted; if the path leads to a rejecting state or trap state, it is rejected. There is no guessing.
+
+An NFA, on the other hand, embraces ambiguity. From a single state, an NFA might have multiple transitions for the exact same input symbol, or it might have no transitions at all (causing that specific path to "die"). Furthermore, an NFA can use epsilon-transitions (empty string transitions), allowing it to jump to a completely new state without consuming any input characters.
+
+Conceptually, you can think of an NFA as a machine that spawns a new "thread" or parallel path every time it faces a choice. It explores all possible valid avenues simultaneously. If any single one of those parallel paths eventually leads to an accepting state when the input is fully read, the NFA accepts the string.
+
+Direct Comparison
+
+| Feature 	  	| Deterministic Finite Automaton (DFA) | Nondeterministic Finite Automaton (NFA) |
+| Transitions	  | Every state must have exactly one transition for every single symbol in the alphabet. | A state can have zero, one, or multiple transitions for a single symbol. |
+| Empty Transitions | Cannot use epsilon-transitions. | Can use epsilon-transitions to change states without reading input. |
+| Mathematical Mapping | The transition function maps to a single state: delta: Q * Sigma -> Q | The transition function maps to a powerset of states: delta: Q * Sigma -> P(Q) |
+| Execution Speed | Faster to execute in software. Processing a string of length n takes exactly O(n) time. | Slower to execute. The system must track multiple possible active states simultaneously. |
+| Space & Design | Can require exponentially more states. Harder for humans to design for complex patterns. | Typically requires fewer states. Much easier to construct directly from regular expressions. |
+
+The Great Equalizer
+
+Despite these massive architectural differences, **DFAs and NFAs have the exact same computational power**. Any language that can be recognized by an NFA can also be recognized by a DFA.
+
+Through an algorithm known as "Subset Construction" (or Powerset Construction), every single NFA can be systematically converted into an equivalent DFA. In computer science, we often use NFAs as a stepping stone: we design the NFA because it is much easier for the human brain to map out complex patterns conditionally, and then we programmatically compile it down into a DFA so the computer can execute the string matching as fast as possible.
+
+
+Q.) Compare Moore and Mealy with Example 
+A.)

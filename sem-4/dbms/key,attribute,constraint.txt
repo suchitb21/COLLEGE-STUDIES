@@ -1,0 +1,728 @@
+TYPES OF KEYS IN DATABASE
+
+1. SUPER KEY
+Definition: A set of one or more attributes that can uniquely identify a tuple (row) in a table.
+Characteristics:
+- Can have one or more attributes
+- Uniquely identifies each row
+- May contain redundant attributes
+- Not necessarily minimal
+
+Example:
+In Employee table with columns: EmployeeID, Email, SSN, Name, Salary
+Super Keys: {EmployeeID}, {Email}, {SSN}, {EmployeeID, Name}, {Email, SSN}, {EmployeeID, Email, SSN}
+All above can uniquely identify employee, so all are super keys.
+
+2. CANDIDATE KEY
+Definition: A minimal super key with no redundant attributes. Minimal means removing any attribute would make it unable to identify tuples uniquely.
+Characteristics:
+- Minimal set of attributes
+- No redundant attributes
+- Can be more than one candidate key
+- Best candidates for primary key
+
+Example:
+From Employee table:
+Candidate Keys: {EmployeeID}, {Email}, {SSN}
+Each alone can uniquely identify employee without needing other attributes.
+Not Candidate Key: {EmployeeID, Name} - EmployeeID alone can identify, so Name is redundant.
+
+3. PRIMARY KEY
+Definition: A candidate key selected by the Database Administrator (DBA) to serve as the main unique identifier for a table.
+Characteristics:
+- Chosen from candidate keys
+- Uniquely identifies each row
+- Cannot contain NULL values
+- Only one primary key per table
+- Enforced by database automatically
+
+Example:
+CREATE TABLE emp (
+    empid INT PRIMARY KEY,
+    email VARCHAR(100) UNIQUE,
+    ssn VARCHAR(11) UNIQUE,
+    name VARCHAR(100)
+);
+
+EmployeeID is chosen as primary key, though Email and SSN could have been.
+
+4. ALTERNATE KEY (Unique Key)
+Definition: Candidate keys that are not selected as primary key.
+Characteristics:
+- Could serve as primary key but not chosen
+- Still provide unique identification
+- Can have NULL values (unlike primary key)
+- Multiple alternate keys possible
+
+Example:
+CREATE TABLE emp (
+    empid INT PRIMARY KEY,
+    email VARCHAR(100) UNIQUE,      -- Alternate Key
+    ssn VARCHAR(11) UNIQUE          -- Alternate Key
+);
+
+Email and SSN are alternate keys because they can uniquely identify but are not primary key.
+
+5. FOREIGN KEY
+Definition: An attribute or set of attributes in one table that refers to the primary key (or candidate key) of another table. Creates relationship between tables.
+Characteristics:
+- References primary key of another table
+- Maintains referential integrity
+- Can contain NULL values
+- Multiple foreign keys possible
+- Can reference same table (self-referencing)
+
+Example:
+CREATE TABLE emp (
+    empid INT PRIMARY KEY,
+    name VARCHAR(100),
+    dno INT,
+    FOREIGN KEY (dno) REFERENCES dept(dno)
+);
+
+dno in emp table is foreign key referencing dno (primary key) in dept table.
+
+6. COMPOSITE KEY (Compound Key)
+Definition: Primary key made up of two or more attributes together.
+Characteristics:
+- Multiple columns form primary key
+- Each column alone may not be unique
+- Combination of columns is unique
+- Used when single column cannot uniquely identify
+
+Example:
+CREATE TABLE enrollment (
+    student_id INT,
+    course_id INT,
+    semester VARCHAR(20),
+    grade CHAR(2),
+    PRIMARY KEY (student_id, course_id, semester)
+);
+
+Single student_id not unique (one student takes multiple courses)
+Single course_id not unique (many students take one course)
+But combination (student_id, course_id, semester) is unique.
+
+7. PARTIAL KEY (Discriminator)
+Definition: In weak entities, attribute that helps identify rows when combined with primary key of strong entity.
+Characteristics:
+- Not a primary key by itself
+- Identifies within context of parent entity
+- Used in weak entity relationships
+- When combined with foreign key becomes primary key
+
+Example:
+Strong Entity: Student(StudentID, Name)
+Weak Entity: Dependent(DependentID, Name, Relationship)
+
+DependentID is partial key. (StudentID, DependentID) together form composite primary key.
+
+SUMMARY TABLE OF KEYS
+
+Key Type           Uniqueness  NULL Allowed  Count per Table  Purpose
+---------          ----------  -----------  ---------------  -------
+Super Key          Yes         Yes          Multiple         Identify tuple
+Candidate Key      Yes         Yes          Multiple         Best for PK
+Primary Key        Yes         No           One              Main identifier
+Alternate Key      Yes         Yes          Multiple         Backup identifier
+Foreign Key        No          Yes          Multiple         Link tables
+Composite Key      Yes         Depends      Multiple         Multi-column PK
+Partial Key        No          Yes          Multiple         Weak entity PK
+
+
+TYPES OF ATTRIBUTES
+
+1. SIMPLE ATTRIBUTE (Atomic Attribute)
+Definition: Attribute that cannot be divided into smaller meaningful parts.
+Characteristics:
+- Cannot be subdivided
+- Single value
+- Represented by single oval in ER diagram
+- Atomic in nature
+
+Example:
+EmployeeID, Age, Salary, PhoneNumber
+Each cannot be broken into meaningful components.
+
+2. COMPOSITE ATTRIBUTE
+Definition: Attribute that can be divided into smaller, meaningful sub-attributes.
+Characteristics:
+- Can be subdivided
+- Multiple components
+- Represented by oval with connected sub-ovals in ER diagram
+- Improves readability
+
+Example:
+Address: Street + City + State + ZipCode
+Name: FirstName + MiddleName + LastName
+Date: Day + Month + Year
+
+CREATE TABLE emp (
+    empid INT PRIMARY KEY,
+    firstname VARCHAR(50),
+    middlename VARCHAR(50),
+    lastname VARCHAR(50),
+    street VARCHAR(100),
+    city VARCHAR(50),
+    state VARCHAR(50),
+    zipcode VARCHAR(10)
+);
+
+3. KEY ATTRIBUTE (Identifier Attribute)
+Definition: Attribute that uniquely identifies an entity in entity set. Acts as primary key.
+Characteristics:
+- Uniquely identifies entity
+- Underlined in ER diagram
+- Cannot have duplicate values
+- Cannot be NULL
+
+Example:
+In Student entity: StudentID is key attribute
+In Course entity: CourseID is key attribute
+Both uniquely identify their respective entities.
+
+4. MULTIVALUED ATTRIBUTE
+Definition: Attribute that can hold multiple values for a single entity.
+Characteristics:
+- Can have more than one value
+- One entity can have multiple values
+- Represented by double oval in ER diagram
+- Examples: skills, languages, phone numbers
+
+Example:
+Student entity with PhoneNumbers attribute:
+One student may have: 9876543210, 9123456789, 9988776655
+Employee with Languages: English, Hindi, French, Spanish
+
+In database, usually stored in separate table:
+CREATE TABLE emp_phone (
+    empid INT,
+    phone_number VARCHAR(15),
+    PRIMARY KEY (empid, phone_number),
+    FOREIGN KEY (empid) REFERENCES emp(empid)
+);
+
+5. DERIVED ATTRIBUTE
+Definition: Attribute whose value is derived from other attributes. Not physically stored.
+Characteristics:
+- Calculated from other attributes
+- Not stored directly in database
+- Represented by dashed oval in ER diagram
+- Value changes when source attributes change
+- Stored Attribute is the source
+
+Example:
+Age is derived from DateOfBirth
+Salary_Increment is derived from Salary and increment_percentage
+GPA is derived from all course grades
+
+In database:
+SELECT empid, empname, datediff(year, bdate, getdate()) AS Age
+FROM emp;
+
+Age calculated on-the-fly from bdate attribute.
+
+6. STORED ATTRIBUTE
+Definition: Attribute that is physically stored in database and used to derive other attributes.
+Characteristics:
+- Actually stored
+- Source for derived attributes
+- Cannot be derived
+- Required for calculations
+
+Example:
+DateOfBirth is stored attribute from which Age is derived
+Salary is stored attribute from which Bonus is calculated
+JoiningDate is stored from which ServiceYears is calculated
+
+7. COMPLEX ATTRIBUTE
+Definition: Combination of composite and multivalued attributes nested together.
+Characteristics:
+- Combination of composite AND multivalued
+- Hierarchical structure
+- Multiple nested levels
+
+Example:
+Person entity with PhoneNumbers (multivalued) where each PhoneNumber has:
+- Type (Work, Home, Mobile)
+- CountryCode
+- AreaCode
+- Number
+
+This is complex because PhoneNumbers is multivalued AND each phone is composite.
+
+In database:
+CREATE TABLE person_phone (
+    person_id INT,
+    phone_type VARCHAR(20),
+    country_code VARCHAR(3),
+    area_code VARCHAR(5),
+    number VARCHAR(10),
+    PRIMARY KEY (person_id, phone_type),
+    FOREIGN KEY (person_id) REFERENCES person(person_id)
+);
+
+SUMMARY TABLE OF ATTRIBUTES
+
+Attribute Type    Divisible  Multiple Values  Storage  ER Symbol
+--------------    ---------  ---------------  -------  ---------
+Simple            No         No               Direct   Oval
+Composite         Yes        No               Direct   Oval + branches
+Key               No         No               Direct   Underlined oval
+Multivalued       No         Yes              Table    Double oval
+Derived           No         No               No       Dashed oval
+Stored            No         No               Direct   Oval
+Complex           Yes        Yes              Table    Complex structure
+
+
+===================================================================
+INTEGRITY CONSTRAINTS IN DATABASE
+===================================================================
+
+Integrity constraints are rules that ensure data accuracy, consistency, and reliability. They prevent invalid data from being entered into database.
+
+TYPES OF INTEGRITY CONSTRAINTS:
+
+1. KEY CONSTRAINT (Unique Constraint)
+
+Definition: Ensures that each row has unique value(s) for specified column(s). Prevents duplicate entries.
+
+Types:
+a) Primary Key Constraint: Unique identifier, no NULLs, one per table
+b) Unique Constraint: Unique values allowed, NULLs allowed, multiple per table
+
+Syntax:
+-- Primary Key Constraint
+CREATE TABLE emp (
+    empid INT PRIMARY KEY,
+    name VARCHAR(100)
+);
+
+-- Unique Constraint
+CREATE TABLE emp (
+    empid INT PRIMARY KEY,
+    email VARCHAR(100) UNIQUE,
+    phone VARCHAR(15) UNIQUE
+);
+
+-- Composite Primary Key
+CREATE TABLE enrollment (
+    student_id INT,
+    course_id INT,
+    PRIMARY KEY (student_id, course_id)
+);
+
+-- Add constraint later
+ALTER TABLE emp ADD CONSTRAINT uk_email UNIQUE (email);
+
+Effects:
+- Prevents duplicate values
+- Creates index automatically
+- Enforces uniqueness automatically
+- Violating insertion rejected with error
+
+Example Violation:
+INSERT INTO emp VALUES (101, 'raj@email.com');
+INSERT INTO emp VALUES (102, 'raj@email.com');  -- Error: Duplicate entry
+
+Real-world Use:
+- EmployeeID, StudentID: Primary Keys
+- Email, SSN, Phone: Unique constraints
+- (StudentID, CourseID): Composite key for enrollments
+
+
+2. DOMAIN CONSTRAINT
+
+Definition: Ensures that values in a column belong to specified domain (data type, range, format). Restricts values to valid set.
+
+Types of Domain Constraints:
+a) Data Type: Column must contain specific data type
+b) Range Constraint: Values must fall within range
+c) Format Constraint: Values must follow pattern
+d) NULL Constraint: Whether NULL allowed or not
+e) Default Constraint: Default value if not provided
+
+Syntax:
+-- Data Type Domain
+CREATE TABLE product (
+    product_id INT,
+    name VARCHAR(100),
+    price DECIMAL(10,2),
+    quantity INT
+);
+
+-- NOT NULL Constraint (forbid NULL)
+CREATE TABLE emp (
+    empid INT NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    salary DECIMAL(10,2) NOT NULL
+);
+
+-- DEFAULT Constraint
+CREATE TABLE emp (
+    empid INT,
+    name VARCHAR(100),
+    joining_date DATE DEFAULT CURRENT_DATE,
+    status VARCHAR(20) DEFAULT 'Active'
+);
+
+-- Range Constraint (using CHECK)
+CREATE TABLE emp (
+    empid INT,
+    name VARCHAR(100),
+    salary DECIMAL(10,2) CHECK (salary >= 10000 AND salary <= 100000),
+    age INT CHECK (age >= 18 AND age <= 65)
+);
+
+-- Format Constraint (using CHECK with LIKE or REGEXP)
+CREATE TABLE user (
+    user_id INT,
+    email VARCHAR(100) CHECK (email LIKE '%@%.%'),
+    phone VARCHAR(15) CHECK (phone REGEXP '^[0-9]{10}$')
+);
+
+Examples:
+
+INSERT INTO emp VALUES (101, 'Raj', 5000);
+-- Error: Violates CHECK constraint (salary < 10000)
+
+INSERT INTO emp VALUES (102, 'Priya', NULL);
+-- Error: Violates NOT NULL constraint
+
+INSERT INTO emp VALUES (103, 'Rohan', 25000);
+-- Success: salary between 10000-100000
+
+INSERT INTO emp VALUES (104, 'Sneha');
+-- Success: joining_date set to today (DEFAULT), status set to 'Active'
+
+Real-world Use:
+- Email format validation
+- Age range constraints
+- Salary within company standards
+- Status from predefined set
+- Phone number format
+
+
+3. REFERENTIAL INTEGRITY CONSTRAINT (Foreign Key)
+
+Definition: Ensures that value in foreign key column matches a value in referenced primary key. Maintains relationship between tables.
+
+Characteristics:
+- References primary/unique key of another table
+- Prevents orphaned records
+- Maintains data consistency
+- Foreign key can be NULL
+- Foreign key value must exist in parent table
+
+Syntax:
+-- Basic Foreign Key
+CREATE TABLE emp (
+    empid INT PRIMARY KEY,
+    name VARCHAR(100),
+    dno INT,
+    FOREIGN KEY (dno) REFERENCES dept(dno)
+);
+
+-- Named Foreign Key
+CREATE TABLE emp (
+    empid INT PRIMARY KEY,
+    name VARCHAR(100),
+    dno INT,
+    CONSTRAINT fk_emp_dept FOREIGN KEY (dno) REFERENCES dept(dno)
+);
+
+-- Composite Foreign Key
+CREATE TABLE enrollment (
+    student_id INT,
+    course_id INT,
+    semester VARCHAR(20),
+    grade CHAR(2),
+    PRIMARY KEY (student_id, course_id, semester),
+    FOREIGN KEY (student_id) REFERENCES student(student_id),
+    FOREIGN KEY (course_id) REFERENCES course(course_id)
+);
+
+-- Foreign Key with Cascade Delete
+CREATE TABLE emp (
+    empid INT PRIMARY KEY,
+    name VARCHAR(100),
+    dno INT,
+    FOREIGN KEY (dno) REFERENCES dept(dno) ON DELETE CASCADE
+);
+
+-- Foreign Key with Cascade Update
+CREATE TABLE emp (
+    empid INT PRIMARY KEY,
+    name VARCHAR(100),
+    dno INT,
+    FOREIGN KEY (dno) REFERENCES dept(dno) ON UPDATE CASCADE
+);
+
+Referential Actions:
+1. RESTRICT: Prevents deletion/update if child records exist
+2. CASCADE: Deletes/updates child records automatically
+3. SET NULL: Sets foreign key to NULL when parent deleted
+4. SET DEFAULT: Sets to default value when parent deleted
+5. NO ACTION: Similar to RESTRICT
+
+Example Setup:
+CREATE TABLE dept (
+    dno INT PRIMARY KEY,
+    dname VARCHAR(50),
+    location VARCHAR(50)
+);
+
+CREATE TABLE emp (
+    empid INT PRIMARY KEY,
+    empname VARCHAR(100),
+    dno INT,
+    FOREIGN KEY (dno) REFERENCES dept(dno) ON DELETE CASCADE
+);
+
+Examples:
+
+-- Valid insertion
+INSERT INTO dept VALUES (10, 'IT', 'Mumbai');
+INSERT INTO emp VALUES (101, 'Raj', 10);  -- Success: dno 10 exists in dept
+
+-- Invalid insertion
+INSERT INTO emp VALUES (102, 'Priya', 50);  -- Error: dno 50 doesn't exist in dept
+
+-- Cascade Delete Example
+DELETE FROM dept WHERE dno = 10;  -- Automatically deletes emp with dno=10
+
+Real-world Use:
+- Employee to Department relationship
+- Orders to Customer relationship
+- Student to Course enrollment
+- Product to Category relationship
+- Account to Customer relationship
+
+
+4. CHECK CONSTRAINT
+
+Definition: Ensures that values in a column satisfy specified condition. Only allows values that meet the condition.
+
+Characteristics:
+- Custom validation rules
+- Works on single or multiple columns
+- Evaluated for INSERT and UPDATE
+- Can use comparison and logical operators
+- Rejects violating data
+
+Syntax:
+-- Simple CHECK
+CREATE TABLE emp (
+    empid INT,
+    empname VARCHAR(100),
+    salary DECIMAL(10,2) CHECK (salary > 0)
+);
+
+-- CHECK with Range
+CREATE TABLE emp (
+    empid INT,
+    empname VARCHAR(100),
+    salary DECIMAL(10,2) CHECK (salary >= 10000 AND salary <= 100000)
+);
+
+-- CHECK with Multiple Columns
+CREATE TABLE project (
+    project_id INT,
+    start_date DATE,
+    end_date DATE,
+    CHECK (end_date >= start_date)
+);
+
+-- CHECK with IN operator
+CREATE TABLE emp (
+    empid INT,
+    empname VARCHAR(100),
+    status VARCHAR(20) CHECK (status IN ('Active', 'Inactive', 'On Leave'))
+);
+
+-- CHECK with LIKE (pattern)
+CREATE TABLE user (
+    user_id INT,
+    email VARCHAR(100) CHECK (email LIKE '%@%.%'),
+    phone VARCHAR(15) CHECK (phone LIKE '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]')
+);
+
+-- Named CHECK Constraint
+CREATE TABLE emp (
+    empid INT,
+    empname VARCHAR(100),
+    age INT,
+    salary DECIMAL(10,2),
+    CONSTRAINT chk_age CHECK (age >= 18 AND age <= 65),
+    CONSTRAINT chk_salary CHECK (salary >= 25000)
+);
+
+-- Add CHECK constraint later
+ALTER TABLE emp ADD CONSTRAINT chk_salary CHECK (salary > 0);
+
+Examples:
+
+Valid Data:
+INSERT INTO emp VALUES (101, 'Raj', 25000);       -- Success
+INSERT INTO emp VALUES (102, 'Priya', 50000);     -- Success
+
+Invalid Data:
+INSERT INTO emp VALUES (103, 'Rohan', 5000);      -- Error: salary < 10000
+INSERT INTO emp VALUES (104, 'Sneha', -1000);     -- Error: salary < 0
+
+Range Example:
+CREATE TABLE student (
+    student_id INT,
+    marks INT CHECK (marks >= 0 AND marks <= 100)
+);
+
+INSERT INTO student VALUES (1, 85);               -- Success
+INSERT INTO student VALUES (2, 150);              -- Error: marks > 100
+
+Date Example:
+CREATE TABLE event (
+    event_id INT,
+    start_date DATE,
+    end_date DATE,
+    CHECK (end_date >= start_date)
+);
+
+INSERT INTO event VALUES (1, '2026-02-10', '2026-02-15');  -- Success
+INSERT INTO event VALUES (2, '2026-02-20', '2026-02-10');  -- Error: end before start
+
+Status Example:
+CREATE TABLE order_table (
+    order_id INT,
+    status VARCHAR(20) CHECK (status IN ('Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'))
+);
+
+INSERT INTO order_table VALUES (1, 'Pending');     -- Success
+INSERT INTO order_table VALUES (2, 'Invalid');     -- Error: status not in list
+
+Real-world Use:
+- Age between 18 and 65
+- Salary within range
+- Date validations
+- Status from allowed values
+- Percentage between 0 and 100
+- Email format validation
+
+
+5. NOT NULL CONSTRAINT
+
+Definition: Ensures that a column must always have a value. NULL values are not permitted.
+
+Characteristics:
+- Column must contain value
+- No empty/missing data
+- Applied at column level
+- Default is NULL allowed
+
+Syntax:
+-- NOT NULL Constraint
+CREATE TABLE emp (
+    empid INT NOT NULL,
+    empname VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    salary DECIMAL(10,2)  -- NULL allowed
+);
+
+-- Add NOT NULL later (tricky)
+ALTER TABLE emp MODIFY COLUMN phone VARCHAR(15) NOT NULL;
+
+Examples:
+
+Valid Data:
+INSERT INTO emp VALUES (101, 'Raj', 'raj@email.com', 25000);  -- Success
+INSERT INTO emp VALUES (102, 'Priya', 'priya@email.com', NULL);  -- Success (salary can be NULL)
+
+Invalid Data:
+INSERT INTO emp VALUES (103, NULL, 'rohan@email.com', 30000);  -- Error: empname is NULL
+INSERT INTO emp VALUES (104, 'Sneha', NULL, 28000);  -- Error: email is NULL
+
+
+6. DEFAULT CONSTRAINT
+
+Definition: Provides default value for column if no value is provided during insertion.
+
+Characteristics:
+- Automatically assigns value
+- User can override default
+- Applied at column level
+- Reduces data entry errors
+
+Syntax:
+CREATE TABLE emp (
+    empid INT,
+    empname VARCHAR(100) NOT NULL,
+    joining_date DATE DEFAULT CURRENT_DATE,
+    status VARCHAR(20) DEFAULT 'Active',
+    salary DECIMAL(10,2) DEFAULT 0
+);
+
+Examples:
+
+INSERT INTO emp (empid, empname) VALUES (101, 'Raj');
+-- joining_date = current date, status = 'Active', salary = 0
+
+INSERT INTO emp (empid, empname, status) VALUES (102, 'Priya', 'Inactive');
+-- joining_date = current date, status = 'Inactive', salary = 0
+
+Real-world Use:
+- Current date/time
+- Active status
+- Default currency
+- Creation timestamps
+
+
+COMPLETE EXAMPLE: COLLEGE DATABASE WITH ALL CONSTRAINTS
+
+CREATE TABLE student (
+    student_id INT PRIMARY KEY AUTO_INCREMENT,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    phone VARCHAR(15) UNIQUE CHECK (phone REGEXP '^[0-9]{10}$'),
+    dob DATE NOT NULL CHECK (dob <= DATE_SUB(CURRENT_DATE, INTERVAL 18 YEAR)),
+    enrollment_date DATE DEFAULT CURRENT_DATE,
+    status VARCHAR(20) DEFAULT 'Active' CHECK (status IN ('Active', 'Inactive', 'Graduated'))
+);
+
+CREATE TABLE course (
+    course_id INT PRIMARY KEY AUTO_INCREMENT,
+    course_name VARCHAR(100) NOT NULL UNIQUE,
+    credits INT NOT NULL CHECK (credits >= 1 AND credits <= 4),
+    fee DECIMAL(10,2) NOT NULL CHECK (fee > 0),
+    department VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE enrollment (
+    enrollment_id INT PRIMARY KEY AUTO_INCREMENT,
+    student_id INT NOT NULL,
+    course_id INT NOT NULL,
+    semester VARCHAR(20) NOT NULL,
+    grade CHAR(2),
+    UNIQUE (student_id, course_id, semester),
+    FOREIGN KEY (student_id) REFERENCES student(student_id) ON DELETE CASCADE,
+    FOREIGN KEY (course_id) REFERENCES course(course_id) ON DELETE RESTRICT,
+    CHECK (grade IN ('A', 'B', 'C', 'D', 'F', NULL))
+);
+
+CREATE TABLE instructor (
+    instructor_id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    salary DECIMAL(10,2) CHECK (salary >= 50000 AND salary <= 200000),
+    hire_date DATE DEFAULT CURRENT_DATE,
+    department VARCHAR(50) NOT NULL
+);
+
+This example demonstrates all five integrity constraints working together.
+
+Key Constraint: student_id (PRIMARY KEY), course_id (PRIMARY KEY)
+Domain Constraint: NOT NULL, DEFAULT, data types, CHECK conditions
+Referential Constraint: FOREIGN KEY relationships
+Check Constraint: Status values, grades, salary ranges
+Default Constraint: enrollment_date, hire_date, status
+
+This comprehensive guide covers all integrity constraints and their practical applications.
