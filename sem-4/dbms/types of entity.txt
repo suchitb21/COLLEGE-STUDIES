@@ -1,0 +1,213 @@
+TYPE OF ENTITIES IN DATABASE DESIGN
+
+1. STRONG ENTITY (Independent Entity)
+A strong entity is an entity that can exist independently and has its own primary key. It doesn't depend on any other entity for its existence.
+
+Characteristics:
+- Has its own primary key
+- Can exist without other entities
+- Represented by single rectangle in ER diagram
+- Uniquely identified by primary key alone
+
+Example:
+Customer(CustomerID, CustomerName, Email, Phone)
+- CustomerID is the primary key
+- Customer can exist independently
+- Doesn't need another entity to define it
+
+Another Example:
+Employee(EmployeeID, EmployeeName, Address, Salary)
+- EmployeeID is primary key
+- Employee exists independently
+
+2. WEAK ENTITY (Dependent Entity)
+A weak entity is an entity that cannot exist independently. It depends on a strong entity for its existence and uses a partial key combined with the strong entity's primary key to uniquely identify itself.
+
+Characteristics:
+- Does NOT have its own primary key
+- Depends on another entity for existence
+- Has a partial key (discriminator)
+- Represented by double rectangle in ER diagram
+- Needs foreign key + partial key to uniquely identify
+
+Example:
+Student has DependentFamily members
+Strong Entity: Student(StudentID, StudentName, Address)
+Weak Entity: Dependent(DependentID, DependentName, Relationship)
+- DependentID alone is not unique across all dependents
+- StudentID + DependentID together form composite primary key
+- If student is deleted, their dependents must also be deleted (referential integrity)
+
+Another Example:
+Hotel and Room
+Strong Entity: Hotel(HotelID, HotelName, Location, Rating)
+Weak Entity: Room(RoomNumber, RoomType, Price)
+- RoomNumber is not unique globally (every hotel has Room 101)
+- HotelID + RoomNumber together uniquely identify a room
+- If hotel is deleted, all rooms are deleted
+
+Another Example:
+Course and CourseSection
+Strong Entity: Course(CourseID, CourseName, Credits)
+Weak Entity: CourseSection(SectionID, Semester, Instructor, TimeSlot)
+- SectionID alone doesn't identify section (multiple courses have Section 1)
+- CourseID + SectionID uniquely identifies section
+
+3. ASSOCIATIVE ENTITY (Junction/Bridge Entity)
+An associative entity is created to resolve many-to-many relationships. It contains the primary keys of both related entities as foreign keys and may have its own additional attributes.
+
+Characteristics:
+- Represents a many-to-many relationship
+- Contains at least two foreign keys from related entities
+- Can have additional attributes describing the relationship
+- Primary key is usually composite of both foreign keys
+- Can be represented as entity or as relationship with attributes
+
+Example:
+Student enrolls in Course (many-to-many relationship)
+Student(StudentID, StudentName, Email)
+Course(CourseID, CourseName, Credits)
+Enrollment(StudentID, CourseID, EnrollmentDate, Grade, Status)
+- Enrollment is associative entity
+- StudentID and CourseID are foreign keys
+- EnrollmentDate and Grade are additional attributes
+- Primary key: (StudentID, CourseID)
+
+Another Example:
+Employee works on Project (many-to-many)
+Employee(EmployeeID, EmployeeName, Salary)
+Project(ProjectID, ProjectName, Budget)
+Assignment(EmployeeID, ProjectID, HoursWorked, Role, StartDate)
+- Assignment is associative entity
+- EmployeeID and ProjectID are foreign keys
+- HoursWorked and Role describe the relationship
+- Primary key: (EmployeeID, ProjectID)
+
+Another Example:
+Doctor and Patient (many-to-many)
+Doctor(DoctorID, DoctorName, Specialization)
+Patient(PatientID, PatientName, Age)
+Consultation(DoctorID, PatientID, ConsultationDate, Diagnosis, Treatment)
+- Consultation is associative entity
+
+4. REGULAR ENTITY (Simple Entity)
+An entity that has a single attribute as primary key and represents a single object type.
+
+Example:
+Book(BookID, Title, Author, PublishYear)
+Department(DepartmentID, DepartmentName, Location)
+
+5. COMPOSITE ENTITY
+An entity that consists of multiple components or attributes that together form the entity.
+
+Example:
+Address could be composite: Street + City + State + ZipCode
+Name could be composite: FirstName + LastName + MiddleName
+
+In database: Person(PersonID, FirstName, LastName, MiddleName, Street, City, State, ZipCode)
+
+
+COMPARISON TABLE: STRONG vs WEAK ENTITY
+
+Feature                 Strong Entity           Weak Entity
+Primary Key             Has its own PK          No own PK, partial key only
+Independence            Can exist alone         Depends on strong entity
+Identification          PK alone identifies     PK + FK identifies
+ER Diagram              Single rectangle        Double rectangle
+Relationship            One-to-Many            One-to-One/One-to-Many
+Deletion                Can be deleted          Deleted when parent deleted
+Example                 Customer, Employee      Dependent, Room
+
+
+REAL-WORLD EXAMPLE: COLLEGE DATABASE
+
+Strong Entities:
+1. Student(StudentID, StudentName, Email, Phone, Address)
+2. Course(CourseID, CourseName, Credits, Department)
+3. Instructor(InstructorID, InstructorName, Department, Specialization)
+4. Department(DepartmentID, DepartmentName, Location)
+
+Weak Entities:
+1. CourseSection(CourseID, SectionID, Semester, Instructor, TimeSlot)
+   - Depends on Course
+   - SectionID alone doesn't identify it globally
+   - Composite PK: (CourseID, SectionID)
+
+2. StudentContact(StudentID, ContactID, ContactName, PhoneNumber, Relationship)
+   - Depends on Student
+   - Composite PK: (StudentID, ContactID)
+
+Associative Entities:
+1. Enrollment(StudentID, CourseID, SectionID, EnrollmentDate, Grade, Status)
+   - Represents many-to-many between Student and Course
+   - Composite PK: (StudentID, CourseID, SectionID)
+
+2. Prerequisite(CourseID, PrerequisiteCourseID, Minimum Grade)
+   - Represents many-to-many within Course (course prerequisites)
+   - Composite PK: (CourseID, PrerequisiteCourseID)
+
+
+ANOTHER EXAMPLE: HOSPITAL DATABASE
+
+Strong Entities:
+1. Patient(PatientID, PatientName, DateOfBirth, Address, Phone)
+2. Doctor(DoctorID, DoctorName, Specialization, Qualification)
+3. Department(DepartmentID, DepartmentName, Location, HeadDoctor)
+4. Medicine(MedicineID, MedicineName, Manufacturer, Price)
+
+Weak Entities:
+1. PatientAdmission(PatientID, AdmissionID, AdmissionDate, DischargeDate, WardNumber)
+   - Depends on Patient
+   - Cannot exist without patient
+   - Composite PK: (PatientID, AdmissionID)
+
+2. MedicalRecord(PatientID, RecordID, RecordDate, Diagnosis, Treatment)
+   - Depends on Patient
+   - Composite PK: (PatientID, RecordID)
+
+Associative Entities:
+1. Consultation(PatientID, DoctorID, ConsultationDate, ConsultationTime, Diagnosis, Fee)
+   - Many-to-many between Patient and Doctor
+   - Composite PK: (PatientID, DoctorID, ConsultationDate)
+
+2. Prescription(PatientID, MedicineID, ConsultationDate, Dosage, Frequency, Duration)
+   - Many-to-many between Patient and Medicine
+   - Composite PK: (PatientID, MedicineID, ConsultationDate)
+
+
+KEY POINTS TO REMEMBER
+
+1. Strong entities have primary keys and can exist independently
+2. Weak entities lack primary keys and depend on strong entities
+3. Associative entities resolve many-to-many relationships
+4. Weak entity primary key = Strong entity PK + Weak entity partial key
+5. Use double rectangle for weak entities in ER diagrams
+6. Weak entities follow referential integrity (cascade delete)
+7. Associative entities contain at least 2 foreign keys
+8. Many-to-many relationships must be converted to associative entities in relational model
+
+IDENTIFYING ENTITY TYPE - CHECKLIST
+
+To determine if entity is Strong/Weak/Associative:
+
+1. Does it have its own unique primary key?
+   - YES = Strong Entity (unless it's resolving M:N)
+   - NO = Weak Entity
+
+2. Can it exist without another entity?
+   - YES = Strong Entity
+   - NO = Weak Entity
+
+3. Is it created to resolve a many-to-many relationship?
+   - YES = Associative Entity
+   - NO = Continue checking
+
+4. Does it contain multiple foreign keys?
+   - YES = Likely Associative Entity
+   - NO = Likely Regular Entity
+
+5. Does its existence depend on another entity?
+   - YES = Weak Entity
+   - NO = Strong Entity
+
+This checklist helps quickly identify entity types in any database design problem.

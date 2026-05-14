@@ -1,0 +1,44 @@
+Q.) PDA and its tuple 
+
+A.)
+
+A Pushdown Automaton (PDA) is essentially a Finite State Machine (like a DFA or NFA) that has been upgraded with an infinite memory component called a stack.
+
+While regular finite automata can only remember the current state they are in, a PDA can "push" (add) symbols to the top of its stack and "pop" (remove) symbols from the top of its stack. The stack operates on a LIFO (Last-In, First-Out) principle.
+
+This memory allows PDAs to recognize **Context-Free Languages**, which are more complex than regular languages. For example, a standard DFA cannot check if a string has an equal number of `a`s and `b`s (like `aaabbb`) because it cannot count arbitrarily high. A PDA can solve this easily by pushing a symbol to the stack for every `a` it reads, and popping a symbol off for every `b` it reads. If the stack is empty at the end, the numbers were equal.
+
+### The Formal 7-Tuple Definition
+
+Mathematically, a Pushdown Automaton is defined as a 7-tuple:
+
+
+M = (Q, Sigma, Gamma, delta, q_0, Z_0, F)
+
+Here is what each symbol represents:
+
+* Q (States): A finite set of all the possible states the machine can be in.
+* Sigma (Input Alphabet): A finite set of symbols that make up the input string (e.g., {a, b} or {0, 1} ).
+* Gamma (Stack Alphabet): A finite set of symbols that can be pushed onto the stack. This can be the same as the input alphabet, but it often includes special marker symbols.
+* delta (Transition Function): The rules of the machine. It dictates where the machine goes and what it does to the stack based on three things: the current state, the current input symbol being read (or $\epsilon$ for an empty transition), and the symbol currently at the top of the stack.
+* q_0 (Start State): The state in Q where the machine begins its operation.
+* Z_0 (Initial Stack Symbol): The special symbol initially placed on the stack before the machine starts reading any input. It acts as a "bottom of the stack" marker so the machine knows when the stack is empty. It is an element of $\Gamma$.
+* F (Accepting States): A set of final or accepting states. F is a subset of Q.
+
+The Transition Function in Depth
+
+The transition function $\delta$ is the core engine of the PDA. Mathematically, it is written as:
+
+
+$$\delta: Q \times (\Sigma \cup \{\epsilon\}) \times \Gamma \rightarrow P(Q \times \Gamma^*)$$
+
+To translate this from math into plain logic, it means you look at:
+
+1. Where you are ($Q$)
+2. What you are reading ($\Sigma$ or an empty transition $\epsilon$)
+3. What is at the top of the stack ($\Gamma$)
+
+Based on those three things, the machine moves to a new state and replaces the top symbol of the stack with a new string of symbols ($\Gamma^*$).
+
+* If it replaces it with $\epsilon$, it is **popping** the symbol off the stack.
+* If it replaces it with multiple symbols, it is **pushing** new symbols onto the stack.

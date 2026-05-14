@@ -94,3 +94,92 @@ As a result, update, insertion, and deletion anomalies are completely prevented!
 
 
 Types of anomalies - https://bdavison.napier.ac.uk/db/Notes/Normalisation/anomalies/
+
+You've got a great grasp on the first three normal forms. Let's keep climbing the normalization ladder. Picking up right where you left off, here is how Boyce-Codd Normal Form (BCNF) and Fourth Normal Form (4NF) fit into database design.
+
+ C. Boyce-Codd Normal Form (BCNF)
+
+Also known as 3.5NF.
+
+The Rule: A table is in BCNF if it is in 3NF, and for *every* functional dependency X -> Y, X is a superkey. In simpler terms: If any attribute determines another attribute, it must be a unique identifier (key) for the whole row.
+
+The Problem: 3NF has a slight blind spot. It allows a non-key column to determine a *part* of a composite primary key. This usually happens when a table has overlapping candidate keys.
+
+Let's look at a schedule table where a student takes a course, and each course has multiple professors, but each professor only teaches *one* specific course.
+
+Student_Advising Table (Violates BCNF):
+*Primary Key: (Student_ID, Course)*
+
+| Student_ID | Course | Professor |
+| --- | --- | --- |
+| 101 | Database | Dr. Turing |
+| 102 | Database | Dr. Codd |
+| 101 | Algorithms | Dr. Lovelace |
+
+* The Dependency: `Professor` -> `Course`. (Because Dr. Turing *only* teaches Database).
+* The Violation: `Professor` is determining `Course` (which is part of our Primary Key), but `Professor` is not a superkey (Dr. Turing could teach multiple students, so his name alone doesn't uniquely identify a row). If Dr. Turing stops teaching Database and switches to Networks, we face an update anomaly.
+
+The Fix: Split the table so that the determinant (`Professor`) becomes a valid primary key in its own table.
+
+Tables in BCNF:
+
+Student_Professor Table:
+
+| Student_ID (PK) | Professor (PK) |
+| --- | --- |
+| 101 | Dr. Turing |
+| 102 | Dr. Codd |
+| 101 | Dr. Lovelace |
+
+Professor_Course Table:
+
+| Professor (PK) | Course |
+| --- | --- |
+| Dr. Turing | Database |
+| Dr. Codd | Database |
+| Dr. Lovelace | Algorithms |
+
+---
+
+ D. Fourth Normal Form (4NF)
+
+(No Multi-Valued Dependencies)
+
+The Rule: A table is in 4NF if it is in BCNF and contains no multi-valued dependencies. A multi-valued dependency occurs when one primary key determines multiple independent attributes, forcing you to create a massive combination of rows.
+
+The Problem: Imagine we want to track a student's technical skills and their hobbies. Skills and hobbies have absolutely nothing to do with each other. If we put them in the same table, we have to create a Cartesian product (every possible combination) just to keep the data accurate.
+
+Student_Profile Table (Violates 4NF):
+*Primary Key: (Roll_No, Skill, Hobby)*
+
+| Roll_No | Skill | Hobby |
+| --- | --- | --- |
+| 101 | Python | Chess |
+| 101 | Python | Guitar |
+| 101 | C++ | Chess |
+| 101 | C++ | Guitar |
+
+* The Violation: Roll_No 101 has two skills and two hobbies. Because they are independent, adding a *third* skill (like Java) means we have to add two new rows (Java + Chess, Java + Guitar) just to maintain consistency. This is a multi-valued dependency: `Roll_No` ->-> `Skill` and `Roll_No` ->-> `Hobby`.
+
+The Fix: Isolate the independent multi-valued attributes into their own separate tables.
+
+Tables in 4NF:
+
+Student_Skills Table:
+
+| Roll_No (PK) | Skill (PK) |
+| --- | --- |
+| 101 | Python |
+| 101 | C++ |
+
+Student_Hobbies Table:
+
+| Roll_No (PK) | Hobby (PK) |
+| --- | --- |
+| 101 | Chess |
+| 101 | Guitar |
+
+ Summary of the Higher Forms
+
+* BCNF stepped in to fix the edge case where a non-key attribute was secretly dictating a prime key attribute.
+* 4NF stepped in to untangle completely independent lists of data that were cross-multiplying and creating massive row bloat.

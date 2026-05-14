@@ -1,0 +1,816 @@
+DEADLOCK IN DBMS - COMPREHENSIVE GUIDE
+
+DEFINITION OF DEADLOCK
+
+A deadlock is a situation where two or more transactions are waiting for each other to release resources (locks), and none of them can proceed. This results in a circular wait where each transaction holds resources that other transactions need.
+
+In simple terms: Transaction A waits for resource held by Transaction B, while Transaction B waits for resource held by Transaction A. Neither can proceed.
+
+Characteristics of Deadlock:
+1. Mutual Exclusion: Resource cannot be shared
+2. Hold and Wait: Transaction holds resource while waiting for another
+3. No Preemption: Resources cannot be forcibly taken
+4. Circular Wait: Transactions form circular chain of resource requests
+
+
+EXAMPLE OF DEADLOCK
+
+Transaction T1:
+Step 1: Lock A (exclusive)
+Step 2: Wait for Lock B
+
+Transaction T2:
+Step 1: Lock B (exclusive)
+Step 2: Wait for Lock A
+
+Timeline:
+T1: Lock A ✓
+T2: Lock B ✓
+T1: Wait for Lock B (T2 holds it) ⏳
+T2: Wait for Lock A (T1 holds it) ⏳
+DEADLOCK! Neither can proceed.
+
+VISUAL REPRESENTATION:
+
+Resource A ←─────── T1 ←─────── Wait for Resource B
+             holds         wants
+                
+Resource B ←─────── T2 ←─────── Wait for Resource A
+             holds         wants
+
+Circular dependency formed = DEADLOCK
+
+
+REAL-WORLD EXAMPLE: BANK TRANSFER
+
+Account A: Balance 1000
+Account B: Balance 2000
+
+Transaction T1: Transfer 100 from A to B
+Step 1: Lock Account A
+Step 2: Deduct 100 from A
+Step 3: Lock Account B
+Step 4: Add 100 to B
+Step 5: Unlock A, B
+
+Transaction T2: Transfer 50 from B to A
+Step 1: Lock Account B
+Step 2: Deduct 50 from B
+Step 3: Lock Account A
+Step 4: Add 50 to A
+Step 5: Unlock B, A
+
+Execution Timeline:
+Time  T1                              T2
+---   --------------------------------  --------------------------------
+1     Lock Account A ✓                -
+2     Deduct 100 from A               -
+3     -                               Lock Account B ✓
+4     -                               Deduct 50 from B
+5     Waiting for Lock B (T2 has it)  Waiting for Lock A (T1 has it)
+6     DEADLOCK DETECTED!              DEADLOCK DETECTED!
+
+
+FOUR NECESSARY CONDITIONS FOR DEADLOCK
+
+All four conditions must be present for deadlock to occur. If any one is missing, deadlock cannot happen.
+
+Condition 1: MUTUAL EXCLUSION
+Definition: Resources cannot be shared between transactions. Only one transaction can hold exclusive lock on resource at a time.
+
+Explanation:
+- Resource can be accessed by only one transaction at a time
+- Other transactions must wait
+- Common in databases (records, pages, tables)
+
+Condition 2: HOLD AND WAIT
+Definition: Transaction holds one resource while waiting for another resource.
+
+Explanation:
+- Transaction does not release resource while requesting another
+- Creates dependency chain
+- Example: T1 holds Lock A and waits for Lock B
+
+Condition 3: NO PREEMPTION
+Definition: Resources cannot be forcibly taken from transaction. Must be released voluntarily.
+
+Explanation:
+- Cannot force transaction to release lock
+- Transaction must voluntarily release
+- Transaction must complete or rollback to release
+
+Condition 4: CIRCULAR WAIT
+Definition: Set of transactions form circular chain where each waits for resource held by next.
+
+Explanation:
+- T1 waits for T2, T2 waits for T3, T3 waits for T1
+- Forms cycle in wait-for graph
+- Last transaction in cycle waits for first
+
+All four conditions must exist together for deadlock. Remove any one = No deadlock possible.
+
+
+DEADLOCK DETECTION USING WAIT-FOR GRAPH
+
+Wait-For Graph:
+- Nodes represent transactions
+- Directed edge from T1 to T2 means T1 waits for T2
+- Cycle in graph = Deadlock exists
+
+Example 1: Deadlock Detected
+Transactions: T1, T2, T3
+
+Edge T1 → T2 (T1 waits for T2)
+Edge T2 → T3 (T2 waits for T3)
+Edge T3 → T1 (T3 waits for T1)
+
+Graph:
+    T1 ──→ T2
+    ↑       ↓
+    └────── T3
+
+Cycle found: T1 → T2 → T3 → T1
+DEADLOCK DETECTED ✗
+
+Example 2: No Deadlock
+Transactions: T1, T2, T3
+
+Edge T1 → T2 (T1 waits for T2)
+Edge T2 → T3 (T2 waits for T3)
+No edge from T3 back to T1
+
+Graph:
+    T1 ──→ T2 ──→ T3
+
+No cycle found
+NO DEADLOCK ✓ (Can execute T3 → T2 → T1)
+
+Example 3: Deadlock Between Two Transactions
+Transactions: T1, T2
+
+Edge T1 → T2 (T1 waits for T2)
+Edge T2 → T1 (T2 waits for T1)
+
+Graph:
+    T1 ←──→ T2
+
+Cycle found: T1 → T2 → T1
+DEADLOCK DETECTED ✗
+
+
+DEADLOCK HANDLING STRATEGIES
+
+There are three main approaches to handle deadlocks:
+
+STRATEGY 1: DEADLOCK PREVENTION
+
+Definition: Design system so deadlock conditions cannot occur. Prevent any one of four necessary conditions.
+
+How it works: Remove possibility of deadlock before it happens.
+
+Advantage: Guaranteed no deadlock
+Disadvantage: Reduces concurrency, low resource utilization
+
+Methods to Prevent Deadlock:
+
+Method 1A: Prevent Mutual Exclusion
+Not possible in databases as some resources must be exclusive.
+
+Method 1B: Prevent Hold and Wait
+Release all resources before requesting new ones.
+
+Implementation:
+- Request all resources at once
+- If not all available, release all and restart
+- Inefficient but deadlock-free
+
+Example:
+Transaction T1:
+Lock (A, B, C) -- Request all together
+Use A, B, C
+Unlock (A, B, C)
+
+If all available → proceed
+If any unavailable → release all
+
+Drawback: Difficult to predict all resources needed in advance.
+
+Method 1C: Prevent No Preemption
+Allow forced removal of resources from transaction.
+
+Implementation:
+- If transaction needs resource held by another, preempt it
+- Rollback lower priority transaction
+- Higher priority transaction proceeds
+- Preempted transaction restarts later
+
+Example:
+T1 (Priority 10) waits for Resource held by T2 (Priority 5)
+Preempt T2: Force release Resource
+T1 proceeds
+T2 restarts later
+
+Drawback: Cascading rollbacks, repeated work.
+
+Method 1D: Prevent Circular Wait (Most Practical)
+Impose ordering on resources. Request in increasing order.
+
+Implementation:
+- Assign unique number to each resource
+- Transactions must request in ascending order
+- Circular wait becomes impossible
+
+Example:
+Resources: A=1, B=2, C=3, D=4
+
+Correct Order:
+Transaction must request: A → B → C → D
+Cannot request: B → A (violates order)
+
+If all transactions follow this:
+T1 requests A, then B, then C
+T2 requests B, then C, then D
+T3 requests A, then D
+
+Since all request in order, cycle impossible.
+
+Proof: If T_i waits for T_j, then Resource_i < Resource_j
+If cycle: T1 → T2 → T3 → T1
+Then: R1 < R2, R2 < R3, R3 < R1
+Contradiction! No cycle possible.
+
+
+STRATEGY 2: DEADLOCK AVOIDANCE
+
+Definition: Allow system to avoid unsafe states that could lead to deadlock. Grant resource only if safe.
+
+How it works: Before granting resource, check if it leads to safe state.
+
+Advantage: Better concurrency than prevention
+Disadvantage: Additional overhead, conservative
+
+Methods to Avoid Deadlock:
+
+Method 2A: BANKER'S ALGORITHM (Dijkstra)
+
+How it works:
+- Maintain resource allocation state
+- Before granting resource, simulate allocation
+- Check if resulting state is safe
+- Grant only if safe
+- Deny (block) if unsafe
+
+Safe State Definition: At least one sequence of transactions can complete without deadlock.
+
+Unsafe State Definition: Sequence exists where some transactions cannot complete.
+
+Example:
+Resources available: 10 units
+Transactions: T1, T2, T3
+
+T1: Claims 5 units, currently has 2, needs 3 more
+T2: Claims 8 units, currently has 4, needs 4 more
+T3: Claims 6 units, currently has 3, needs 3 more
+
+Total claims: 5+8+6 = 19 > 10 available (impossible, reject)
+
+If T1: needs 2, T2: needs 2, T3: needs 2
+T1 → completes → releases 4 units
+T2 → completes → releases 6 units
+T3 → completes → releases 5 units
+SAFE SEQUENCE: T1 → T2 → T3
+
+Method 2B: Wait-Die / Wound-Wait Schemes
+
+Wait-Die Scheme (non-preemptive):
+- If T1 older than T2 and T1 needs T2's resource:
+  T1 waits for T2 (older waits for younger - allowed)
+- If T1 younger than T2 and T1 needs T2's resource:
+  T1 dies/aborts (younger dies - no waiting)
+
+Advantage: Prevents cyclic wait (younger never waits for older)
+Implementation: Timestamp-based
+
+Wound-Wait Scheme (preemptive):
+- If T1 older than T2 and T1 needs T2's resource:
+  T1 wounds (preempts) T2 (older wounds younger)
+  T2 aborts
+- If T1 younger than T2 and T1 needs T2's resource:
+  T1 waits for T2 (younger waits for older)
+
+Advantage: Better for frequently restarting transactions
+Implementation: Priority-based preemption
+
+Example:
+T1 (timestamp: 100) needs resource held by T2 (timestamp: 50)
+T1 is younger (higher timestamp)
+
+Wait-Die: T1 dies (aborts and restarts)
+Wound-Wait: T1 wounds T2 (T2 aborts, T1 proceeds)
+
+
+STRATEGY 3: DEADLOCK DETECTION AND RECOVERY
+
+Definition: Allow deadlock to occur, detect it, and recover. Most practical approach.
+
+How it works:
+1. Permit deadlock to happen
+2. Detect when it occurs using wait-for graph
+3. Recover by aborting transactions
+
+Advantage: Better concurrency, practical
+Disadvantage: Cost of detection and recovery
+
+Detection Phase:
+
+Algorithm: Cycle Detection in Wait-For Graph
+
+Step 1: Build wait-for graph
+- Node for each transaction
+- Edge from Ti to Tj if Ti waits for Tj
+
+Step 2: Check for cycle
+- DFS (Depth First Search)
+- If cycle found → deadlock exists
+
+Step 3: Determine frequency of detection
+- Continuous: Check every time lock request denied (expensive)
+- Periodic: Check every N seconds (risk of missing deadlock)
+- On Demand: Check when certain conditions met
+
+Example Detection:
+Transactions: T1, T2, T3
+
+Current State:
+T1 holds Lock A, waits for Lock B (held by T2)
+T2 holds Lock B, waits for Lock C (held by T3)
+T3 holds Lock C, waits for Lock A (held by T1)
+
+Wait-For Graph:
+T1 → T2 → T3 → T1
+
+DFS Traversal:
+Start T1 → T2 → T3 → T1 (back to T1)
+Cycle detected! Deadlock found.
+
+Recovery Phase:
+
+Once deadlock detected, choose victims and abort.
+
+Step 1: Select victim transaction
+- Choose transaction to abort (victim selection)
+- Factors: least cost, youngest, fewest updates
+
+Step 2: Rollback victim
+- Undo all operations
+- Release all locks
+
+Step 3: Restart victim
+- Transaction can be restarted later
+- Or terminated permanently
+
+Step 4: Check for remaining deadlock
+- May need multiple rollbacks
+
+Victim Selection Criteria:
+1. Cost Minimum: Rollback least expensive transaction
+2. Youngest Transaction: Newer transactions have less work
+3. Fewest Updates: Less undo needed
+4. Lowest Priority: User preferences
+5. Progress: Least completed work
+
+Example Recovery:
+Detected deadlock: T1 ← T2 ← T3 ← T1
+
+Option 1: Abort T1 (youngest)
+- T1 releases Lock A
+- T3 acquires Lock A and completes
+- T2 acquires Lock C and completes
+- T1 restarts
+
+Option 2: Abort T2
+- T2 releases Lock B
+- T1 acquires Lock B and completes
+- T3 acquires Lock A and completes
+- T2 restarts
+
+Starvation Prevention: Ensure restarted transaction eventually completes
+- Don't always choose same victim
+- Use priority to favor older transactions eventually
+
+Cascading Rollback: Can cause multiple transactions to rollback
+- Minimize by choosing victim wisely
+
+
+COMPARISON OF DEADLOCK HANDLING STRATEGIES
+
+Strategy          Method            Deadlock Guaranteed  Concurrency  Overhead  Practical
+---------         ------            ------------------  -----------  --------  ----------
+Prevention        Order Lock        Yes                 Low          High      Low
+Prevention        Hold and Wait     Yes                 Very Low     Very High Low
+Prevention        Preemption        Yes                 Medium       High      Low
+Avoidance         Banker's Algo     Yes                 Medium       High      Low
+Avoidance         Wait-Die          Yes                 High         Medium    Medium
+Detection+Recov   Wait-For Graph    No (detects)        High         Medium    High
+
+
+PRACTICAL DEADLOCK HANDLING IN DIFFERENT DATABASES
+
+MySQL/InnoDB:
+
+Default: Deadlock Detection + Recovery
+
+How it works:
+- Detects deadlock using wait-for graph
+- Automatically chooses victim (usually transaction with least locks)
+- Rolls back victim completely
+- Error message sent to victim application
+- Application can retry
+
+Example:
+```sql
+-- Transaction 1
+START TRANSACTION;
+SELECT * FROM account WHERE id=1 FOR UPDATE;  -- Lock A
+SLEEP(5);  -- Wait
+UPDATE account SET balance=balance-100 WHERE id=2;  -- Lock B
+
+-- Transaction 2 (runs concurrently)
+START TRANSACTION;
+SELECT * FROM account WHERE id=2 FOR UPDATE;  -- Lock B
+UPDATE account SET balance=balance+100 WHERE id=1;  -- Lock A (deadlock!)
+
+-- Result: One transaction rolled back with error
+-- Error: Deadlock found when trying to get lock
+```
+
+Recovery: Application retries failed transaction
+
+PostgreSQL:
+
+Default: Deadlock Detection
+
+Features:
+- Detects deadlock (wait-for graph)
+- Reports to client
+- Client must handle retry
+- More transparent (reports deadlock explicitly)
+
+Oracle:
+
+Features:
+- Lock timeout (LOCK_TIMEOUT parameter)
+- Deadlock detection
+- Thread-based lock management
+- Advanced lock modes (shared, exclusive, custom)
+
+SQL Server:
+
+Default: Deadlock Detection + Automatic Rollback
+
+Features:
+- Deadlock monitoring
+- Victim selection algorithm
+- Can set deadlock priority
+- Trace flag 1204 shows deadlock graphs
+- DEADLOCK_PRIORITY SET HIGH/LOW available
+
+SET DEADLOCK_PRIORITY HIGH;
+-- This transaction less likely to be chosen as victim
+
+SET DEADLOCK_PRIORITY LOW;
+-- This transaction more likely to be victim
+
+
+PRACTICAL DEADLOCK EXAMPLES AND SOLUTIONS
+
+Example 1: Simple Deadlock
+
+Problem Code:
+```sql
+-- Connection 1
+BEGIN TRANSACTION;
+UPDATE emp SET salary = salary + 1000 WHERE empid = 101;
+WAITFOR DELAY '00:00:05';
+UPDATE emp SET salary = salary + 1000 WHERE empid = 102;
+COMMIT;
+
+-- Connection 2
+BEGIN TRANSACTION;
+UPDATE emp SET salary = salary + 500 WHERE empid = 102;
+WAITFOR DELAY '00:00:05';
+UPDATE emp SET salary = salary + 500 WHERE empid = 101;
+COMMIT;
+```
+
+What happens:
+Connection 1: Locks emp 101, waits for emp 102
+Connection 2: Locks emp 102, waits for emp 101
+DEADLOCK DETECTED
+
+Solution 1: Consistent Ordering
+```sql
+-- Connection 1
+BEGIN TRANSACTION;
+UPDATE emp SET salary = salary + 1000 
+WHERE empid IN (101, 102)
+ORDER BY empid;
+COMMIT;
+
+-- Connection 2
+BEGIN TRANSACTION;
+UPDATE emp SET salary = salary + 500 
+WHERE empid IN (101, 102)
+ORDER BY empid;
+COMMIT;
+```
+
+Both transactions acquire locks in same order (101 first, then 102)
+No circular wait → No deadlock
+
+Solution 2: Shorter Transactions
+```sql
+-- Connection 1
+BEGIN TRANSACTION;
+UPDATE emp SET salary = salary + 1000 WHERE empid = 101;
+COMMIT;
+
+BEGIN TRANSACTION;
+UPDATE emp SET salary = salary + 1000 WHERE empid = 102;
+COMMIT;
+
+-- Connection 2
+BEGIN TRANSACTION;
+UPDATE emp SET salary = salary + 500 WHERE empid = 102;
+COMMIT;
+
+BEGIN TRANSACTION;
+UPDATE emp SET salary = salary + 500 WHERE empid = 101;
+COMMIT;
+```
+
+Shorter transactions = Less time holding locks = Less chance of overlap
+
+Solution 3: Reduced Lock Scope
+```sql
+BEGIN TRANSACTION;
+SELECT @emp101_sal = salary FROM emp WHERE empid = 101;
+UPDATE emp SET salary = @emp101_sal + 1000 WHERE empid = 101;
+COMMIT;
+
+BEGIN TRANSACTION;
+SELECT @emp102_sal = salary FROM emp WHERE empid = 102;
+UPDATE emp SET salary = @emp102_sal + 500 WHERE empid = 102;
+COMMIT;
+```
+
+Hold locks only for actual writes, not reads
+
+Example 2: Multi-Table Deadlock
+
+Problem:
+```sql
+-- Transaction 1
+UPDATE emp SET dno = 20 WHERE empid = 101;    -- Lock emp table
+UPDATE dept SET dmgrid = 101 WHERE dno = 20;  -- Lock dept table
+
+-- Transaction 2
+UPDATE dept SET dmgrid = 102 WHERE dno = 10;  -- Lock dept table
+UPDATE emp SET dno = 10 WHERE empid = 102;    -- Lock emp table
+```
+
+Solution: Table Access Order
+```sql
+-- Transaction 1
+UPDATE dept SET dmgrid = 101 WHERE dno = 20;  -- Lock dept first
+UPDATE emp SET dno = 20 WHERE empid = 101;    -- Lock emp second
+
+-- Transaction 2
+UPDATE dept SET dmgrid = 102 WHERE dno = 10;  -- Lock dept first
+UPDATE emp SET dno = 10 WHERE empid = 102;    -- Lock emp second
+```
+
+Both access tables in same order → No deadlock
+
+Example 3: Application-Level Retry Logic
+
+```python
+import time
+max_retries = 3
+retry_count = 0
+
+while retry_count < max_retries:
+    try:
+        connection = create_connection()
+        
+        connection.execute("BEGIN TRANSACTION")
+        
+        connection.execute("""
+            UPDATE emp SET salary = salary + 1000 
+            WHERE empid = ?
+        """, (101,))
+        
+        connection.execute("""
+            UPDATE emp SET salary = salary + 1000 
+            WHERE empid = ?
+        """, (102,))
+        
+        connection.commit()
+        print("Transaction successful")
+        break
+        
+    except DeadlockError as e:
+        retry_count += 1
+        print(f"Deadlock detected, retry {retry_count}/{max_retries}")
+        
+        if retry_count >= max_retries:
+            print("Max retries exceeded")
+            raise
+        
+        wait_time = 0.1 * (2 ** retry_count)  # Exponential backoff
+        time.sleep(wait_time)
+        
+    finally:
+        connection.close()
+```
+
+This handles deadlock gracefully with exponential backoff
+
+
+DEADLOCK PREVENTION BEST PRACTICES
+
+1. Maintain Consistent Lock Ordering
+Always acquire locks in same sequence across all transactions.
+
+Code:
+```sql
+-- CORRECT: Same order in all transactions
+UPDATE t1 SET col = val WHERE ...;
+UPDATE t2 SET col = val WHERE ...;
+UPDATE t3 SET col = val WHERE ...;
+```
+
+2. Keep Transactions Short
+Minimize duration and resource holding.
+
+Code:
+```sql
+-- Good: Short focused transaction
+BEGIN TRANSACTION;
+UPDATE account SET balance = balance - 100 WHERE id = 1;
+COMMIT;
+
+-- Bad: Long transaction with delays
+BEGIN TRANSACTION;
+UPDATE account SET balance = balance - 100 WHERE id = 1;
+WAITFOR DELAY '00:01:00';
+UPDATE account SET balance = balance + 100 WHERE id = 2;
+COMMIT;
+```
+
+3. Reduce Lock Scope
+Lock only necessary data.
+
+Code:
+```sql
+-- Good: Lock only what needed
+BEGIN TRANSACTION;
+UPDATE emp SET salary = salary + 1000 WHERE empid = 101;
+COMMIT;
+
+-- Bad: Lock whole table
+BEGIN TRANSACTION;
+SELECT * FROM emp;  -- Reads all, creates many locks
+UPDATE emp SET salary = salary + 1000 WHERE empid = 101;
+COMMIT;
+```
+
+4. Use Appropriate Isolation Levels
+Choose isolation level based on needs.
+
+Isolation Levels (from least to most restrictive):
+1. READ UNCOMMITTED: No locks, fast
+2. READ COMMITTED: Lock during read only
+3. REPEATABLE READ: Lock records until commit
+4. SERIALIZABLE: Lock entire range
+
+Code:
+```sql
+SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
+-- Acquires and releases locks quickly
+
+SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+-- Holds locks longer, prevents more anomalies but more deadlock risk
+```
+
+5. Avoid Nested Transactions
+Don't create transactions within transactions.
+
+Code:
+```sql
+-- Good: Single transaction
+BEGIN TRANSACTION;
+UPDATE t1 SET col = val;
+UPDATE t2 SET col = val;
+COMMIT;
+
+-- Bad: Nested (can cause issues)
+BEGIN TRANSACTION;
+UPDATE t1 SET col = val;
+BEGIN TRANSACTION;  -- Nested!
+UPDATE t2 SET col = val;
+COMMIT;
+COMMIT;
+```
+
+6. Handle Deadlock in Application
+Implement retry logic with exponential backoff.
+
+7. Monitor and Log Deadlocks
+Enable deadlock tracking for analysis.
+
+Code:
+```sql
+-- MySQL: View error log
+SHOW ENGINE INNODB STATUS;
+
+-- SQL Server: Enable trace flag
+DBCC TRACEON (1204, -1);
+
+-- PostgreSQL: Check logs
+SELECT * FROM pg_stat_activity;
+```
+
+8. Use Connection Pooling
+Manages concurrent connections efficiently.
+
+9. Avoid Cursor-Based Updates
+Cursors can lead to deadlocks.
+
+10. Test Under Load
+Simulate production load to find deadlock scenarios.
+
+
+DEADLOCK MONITORING AND DIAGNOSIS
+
+MySQL:
+```sql
+-- View InnoDB status (includes deadlock info)
+SHOW ENGINE INNODB STATUS;
+
+-- Enable deadlock logging
+SET GLOBAL innodb_print_all_deadlocks = ON;
+```
+
+SQL Server:
+```sql
+-- Current locks
+SELECT * FROM sys.dm_tran_locks;
+
+-- Blocked processes
+SELECT * FROM sys.dm_exec_requests 
+WHERE blocking_session_id > 0;
+
+-- Deadlock graph (enable trace flag 1222)
+DBCC TRACEON (1222, -1);
+```
+
+PostgreSQL:
+```sql
+-- Current locks
+SELECT * FROM pg_locks;
+
+-- Active transactions
+SELECT * FROM pg_stat_activity;
+
+-- Kill blocked transaction
+SELECT pg_terminate_backend(pid);
+```
+
+
+SUMMARY
+
+Deadlock Definition: Circular wait where transactions block each other permanently
+
+Four Necessary Conditions:
+1. Mutual Exclusion
+2. Hold and Wait
+3. No Preemption
+4. Circular Wait
+
+Handling Strategies:
+1. PREVENTION: Remove one condition (low concurrency)
+2. AVOIDANCE: Avoid unsafe states (medium concurrency)
+3. DETECTION+RECOVERY: Detect and rollback victim (high concurrency)
+
+Most Practical: Detection + Recovery (used by most DBMSs)
+
+Best Practices:
+1. Consistent lock ordering
+2. Short transactions
+3. Reduced lock scope
+4. Application-level retry logic
+5. Proper isolation levels
+6. Monitoring and logging
+
+This comprehensive guide covers all aspects of deadlock in DBMS with practical solutions.
