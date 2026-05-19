@@ -25,7 +25,7 @@ Q.) Explain user mode and kernel mode with an example
 A.) User mode and kernel mode are two key states in an OS.
 User mode runs regular applications with limited access to system resources, while kernel mode runs the core OS with full control over hardware. This separation ensures security, stability, and efficient resource management.
 
-Programs in user mode can't access the hardware or kernel directly. They must request acess through system calls to the kernel.
+Programs in user mode can't access the hardware or kernel directly. They must request access through system calls to the kernel.
 
 Q.) What is Multiprogramming. Multithreading. Multiprocessing ?
 A.) In a Multiprogramming OS, multiple programs run in memory at the same time. The CPU switches between programs, utilizing its resources more effectively and improving overall system performance.
